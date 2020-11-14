@@ -3,3 +3,4 @@ issues/
 .idea/
 dnevnik/__pycache__
 testing_directory/settings.py
+docs/API.html
