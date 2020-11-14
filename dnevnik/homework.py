@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from . import Teacher, Group
 from .utils import reformat_date
 
 class Homework:
@@ -10,11 +12,11 @@ class Homework:
     mark_requires: bool = None
     date_assigned_on: datetime = None
     date_prepared_for: datetime = None
+    group_id: int = None
 
     # Service properties
     __teacher_id: int = None
     __subject_id: int = None
-    __group_id: int = None
     __client: int = None
 
     def __init__(self, client, _id, created_at, updated_at, teacher_id, subject_id, is_required, mark_required, group_id,
@@ -28,7 +30,17 @@ class Homework:
         self.created_at = reformat_date(created_at)
         self.date_assigned_on = reformat_date(date_assigned_on)
         self.date_prepared_for = reformat_date(date_prepared_for)
-        self.__group_id = group_id
+        self.group_id = group_id
         self.id = _id
         self.__client = client
 
+    @property
+    def teacher(self):
+        pass
+
+    # TODO Add subject property here, after adding subject class
+    @property
+    def subject(self):
+        pass
+
+    

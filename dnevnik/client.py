@@ -57,4 +57,4 @@ class Client:
 
     def get_homeworks(self, begin_prepared_date: datetime) -> List[Homework]:
         """ Свойство для получаения домашних работ """
-
+        pass
