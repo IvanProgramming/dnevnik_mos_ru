@@ -1,0 +1,2 @@
+AUTH_TOKEN = "" # Authentication token here
+PROFILE_ID = 0 # Replace 0 to your profile id

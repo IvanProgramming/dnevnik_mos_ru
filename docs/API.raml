@@ -1,0 +1,178 @@
+#%RAML 1.0
+---
+title: dnevnik.mos.ru
+baseUri: https://dnevnik.mos.ru
+
+
+/core/api:
+  /academic_years:
+    description: Список академических годов
+    get:
+      description: GET-метод
+      queryParameters:
+        only_current_year:
+          description: Вернуть только текущий год
+          required: false
+          type: boolean
+          example: true
+
+  /marks:
+    description: Получить список оценок ученика
+    get:
+      description: GET-метод
+      queryParameters:
+        created_at_from:
+          description: Начальная дата получения оценок
+          required: false
+          type: date-only
+          example: 2020-09-04
+        created_at_to:
+          description: Конечная дата получения оценок
+          required: false
+          type: date-only
+          example: 2020-09-04
+        profile_id:
+          description: ID пользователя
+          required: false
+          type: integer
+  /student_profiles/{student_id}:
+    description: Получить информацию об ученике
+    get:
+      description: GET-метод
+      queryParameters:
+        student_id:
+          description: ID ученика
+          required: false
+          type: integer
+          example: 3051555
+        with_marks:
+          description: Добавляет в ответ данные об оценках ученика
+          required: false
+          type: boolean
+          example: true
+        with_subjects:
+          description: Добавляет в ответ данные об изучаемых предметах
+          required: false
+          type: boolean
+          example: true
+        with_groups:
+          description: Добавляет в ответ данные об группах, в которых состоит ученик
+          required: false
+          type: boolean
+          example: true
+        with_lesson_info:
+          description: Добавляет в ответ данные об уроках
+          required: false
+          type: boolean
+          example: true
+        with_parents:
+          description: Добавляет в отчет данные о родителях ученика
+          required: false
+          type: boolean
+          example: true
+  /schools/{school_id}:
+    description: Получить информацию о школе
+    get:
+      description: GET-метод
+      queryParameters:
+        school_id:
+          description: ID школы
+          required: false
+          type: integer
+          example: 690
+  /subjets:
+    description: Получить данные по предметам по их ID
+    get:
+      description: GET-метод
+      queryParameters:
+        ids:
+          description: ID предметов
+          required: true
+          type: string
+          example: 12,23,34,2,2
+  /student_homeworks/{homework_id}:
+    description: Получить домашние работы
+    get:
+      description: GET-метод
+      queryParameters:
+        homework_id:
+          description: Получение информации по данной домашней работе
+          required: false
+          type: integer
+          example: 280243649
+        begin_prepared_date:
+          description: Начало выборки для даты
+          required: false
+          type: string
+          example: 12.11.2020
+        end_prepared_date:
+          description: Конец выборки для даты
+          required: false
+          type: string
+          example: 12.11.2020
+
+/jersey/api:
+  /schedule_items:
+    description: Выводит запланированные занятия в данных группах
+    get:
+      description: GET-метод
+      queryParameters:
+        group_id:
+          description: ID групп. Перечислаяются через запятую
+          required: true
+          type: string
+          example: 5864344,5379839,5379840,5379842,5411042,5379843,5379833
+        with_lesson_info:
+          description: ???
+          required: false
+          type: boolean
+          example: true
+        generate_eom_links:
+          description: ???
+          required: false
+          type: boolean
+          example: true
+        with_group_class_subject_info:
+          description: Добавить в ответ информацию о классе, предмете и группе
+          required: false
+          type: boolean
+          example: true
+        with_rooms_info:
+          description: Добавляет в ответ информацию о комнатах
+          required: false
+          type: boolean
+          example: true
+        from:
+          description: Начальная дата ограниения выборки
+          required: false
+          type: date-only
+          example: 2020-11-09
+        to:
+          description: Конечная дата ограницения выборки
+          required: false
+          type: date-only
+          example: 2020-11-09
+
+/vcs:
+  /links:
+    description: Позволяет получить ссылку для подключения к Microsoft Teams
+    get:
+      description: GET-метод
+      queryParameters:
+        scheduled_lesson_id:
+          description: ID урока, позволяет получить ссылку на урок
+          required: true
+          type: integer
+          example: 202020200
+
+/acl/api:
+  /users/{student-id}:
+    description: Получает информацию по юзеру
+    get:
+      description: GET-метод
+      queryParameters:
+        student-id:
+          description: ID пользователя
+          required: false
+          type: integer
+          example: 2531290
