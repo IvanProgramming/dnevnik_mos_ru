@@ -3,6 +3,7 @@ from datetime import datetime
 from . import Teacher, Group
 from .utils import reformat_date
 
+
 class Homework:
     """ Домашняя работа """
     id: int = None
@@ -19,7 +20,8 @@ class Homework:
     __subject_id: int = None
     __client: int = None
 
-    def __init__(self, client, _id, created_at, updated_at, teacher_id, subject_id, is_required, mark_required, group_id,
+    def __init__(self, client, _id, created_at, updated_at, teacher_id, subject_id, is_required, mark_required,
+                 group_id,
                  date_assigned_on, date_prepared_for):
         """ Как я понимаю, эту фигню тоже через API получить нельзя, так что будем указываться напрямую """
         self.mark_required = mark_required
@@ -36,11 +38,9 @@ class Homework:
 
     @property
     def teacher(self):
-        pass
+        return Teacher(self.__client, self.__teacher_id)
 
     # TODO Add subject property here, after adding subject class
     @property
     def subject(self):
         pass
-
-    
