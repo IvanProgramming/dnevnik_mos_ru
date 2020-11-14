@@ -56,5 +56,5 @@ class Client:
         return dnevnik.student_profile.StudentProfile(self)
 
     def get_homeworks(self, begin_prepared_date: datetime) -> List[Homework]:
-        """ Свойство для получаения домашних работ """
+        """ Свойство для получения домашних работ """
         pass

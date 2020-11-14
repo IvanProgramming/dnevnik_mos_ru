@@ -1,6 +1,9 @@
+from dnevnik import School
+
+
 class ClassUnit:
     """Объект класса"""
-    client = None
+    __client = None
     id: int = None
     display_name: str = None
     letter: str = None
@@ -12,7 +15,7 @@ class ClassUnit:
     __school_id: id = None
 
     def __init__(self, client, class_unit_id: int):
-        self.client = client
+        self.__client = client
         data = client.make_request(f"/core/api/class_units/{class_unit_id}")
         self.id = data["id"]
         self.display_name = data["display_name"]
@@ -24,4 +27,4 @@ class ClassUnit:
 
     @property
     def school(self):
-        return None
+        return School(self.__client, self.__school_id)
