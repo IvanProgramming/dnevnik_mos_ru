@@ -2,5 +2,5 @@ venv/
 issues/
 .idea/
 dnevnik/__pycache__
-testing_directory/settings.py
+settings.py
 docs/API.html
