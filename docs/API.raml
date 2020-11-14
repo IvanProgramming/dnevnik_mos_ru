@@ -80,7 +80,7 @@ baseUri: https://dnevnik.mos.ru
           required: false
           type: integer
           example: 690
-  /subjets:
+  /subjects:
     description: Получить данные по предметам по их ID
     get:
       description: GET-метод
@@ -110,6 +110,16 @@ baseUri: https://dnevnik.mos.ru
           required: false
           type: string
           example: 12.11.2020
+  /teacher_profiles/{teacher_profile}:
+    description: Получить информацию по учителю
+    get:
+      description: GET-метод
+      queryParameters:
+        teacher_profile:
+          description: ID учителя
+          required: false
+          type: integer
+          example: 123452
 
 /jersey/api:
   /schedule_items:
