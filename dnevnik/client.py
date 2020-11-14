@@ -1,4 +1,5 @@
 from datetime import datetime
+from pprint import pp
 from typing import List
 
 import requests
@@ -55,6 +56,11 @@ class Client:
         """ Свойство, позволяет получить профиль пользователя """
         return dnevnik.student_profile.StudentProfile(self)
 
-    def get_homeworks(self, begin_prepared_date: datetime) -> List[Homework]:
+    def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> List[Homework]:
         """ Свойство для получения домашних работ """
-        pass
+        begin_prepared_date = datetime.today() if begin_prepared_date else begin_prepared_date
+        end_prepared_date = datetime.today() if end_prepared_date else end_prepared_date
+        homeworks_raw = self.make_request("/core/api/student_homeworks", begin_prepared_date=begin_prepared_date,
+                                          end_prepared_date=end_prepared_date)
+        for homework in homeworks_raw:
+            pp(homework)
