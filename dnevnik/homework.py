@@ -20,7 +20,7 @@ class Homework:
     __subject_id: int = None
     __client: int = None
 
-    def __init__(self, client, _id, created_at, updated_at, teacher_id, subject_id, is_required, mark_required,
+    def __init__(self, client, id, created_at, updated_at, teacher_id, subject_id, is_required, mark_required,
                  group_id,
                  date_assigned_on, date_prepared_for):
         """ Как я понимаю, эту фигню тоже через API получить нельзя, так что будем указываться напрямую """
@@ -33,7 +33,7 @@ class Homework:
         self.date_assigned_on = reformat_date(date_assigned_on)
         self.date_prepared_for = reformat_date(date_prepared_for)
         self.group_id = group_id
-        self.id = _id
+        self.id = id
         self.__client = client
 
     @property
