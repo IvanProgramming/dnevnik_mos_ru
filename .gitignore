@@ -4,3 +4,4 @@ issues/
 dnevnik/__pycache__
 settings.py
 docs/API.html
+unused/
