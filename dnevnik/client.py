@@ -1,11 +1,12 @@
+import json
 from datetime import datetime
 from pprint import pp
 from typing import List
 
 import requests
-import json
+
 import dnevnik
-from dnevnik.homework import Homework
+from dnevnik.student_homework import StudentHomework
 
 
 class Client:
@@ -56,11 +57,18 @@ class Client:
         """ Свойство, позволяет получить профиль пользователя """
         return dnevnik.student_profile.StudentProfile(self)
 
-    def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> List[Homework]:
+    def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> List[
+        StudentHomework]:
         """ Свойство для получения домашних работ """
-        begin_prepared_date = datetime.today() if begin_prepared_date else begin_prepared_date
-        end_prepared_date = datetime.today() if end_prepared_date else end_prepared_date
-        homeworks_raw = self.make_request("/core/api/student_homeworks", begin_prepared_date=begin_prepared_date,
-                                          end_prepared_date=end_prepared_date)
+        homeworks = []
+        begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
+        end_prepared_date = datetime.today() if not end_prepared_date else end_prepared_date
+        homeworks_raw = self.make_request("/core/api/student_homeworks",
+                                          begin_prepared_date=begin_prepared_date.strftime("%d.%m.%Y"),
+                                          end_prepared_date=end_prepared_date.strftime("%d.%m.%Y"))
         for homework in homeworks_raw:
-            pp(homework)
+            del homework["deleted_at"]
+            del homework["homework_entry_id"]
+            del homework["student_name"]
+            homeworks.append(StudentHomework(self, **homework))
+        return homeworks

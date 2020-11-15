@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from . import Teacher, Group
-from .utils import reformat_date
+from dnevnik import Teacher, Group
+from dnevnik.utils import reformat_date
 
 
 class Homework:
