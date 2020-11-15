@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from pprint import pp
 from typing import List
 
 import requests
@@ -57,8 +56,8 @@ class Client:
         """ Свойство, позволяет получить профиль пользователя """
         return dnevnik.student_profile.StudentProfile(self)
 
-    def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> List[
-        StudentHomework]:
+    def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> \
+            List[StudentHomework]:
         """ Свойство для получения домашних работ """
         homeworks = []
         begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
