@@ -8,4 +8,4 @@ me = Client(AUTH_TOKEN, PROFILE_ID)
 lessons = me.get_lessons(datetime.today(), datetime.today())
 
 for lesson in sort_lessons(lessons):
-    print(lesson.subject_name)
+    print(f"{lesson.subject_name} - {lesson.get_teams_link()}")
