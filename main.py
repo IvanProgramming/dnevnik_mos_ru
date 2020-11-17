@@ -1,8 +1,11 @@
 from pprint import pp
-
+from datetime import datetime
 from dnevnik import Client
 from testing_directory.settings import *
+from dnevnik.utils import *
 
 me = Client(AUTH_TOKEN, PROFILE_ID)
-pp(me.make_request("/jersey/api/schedule_items", group_id=",".join(map(lambda gr: str(gr.id), me.profile.groups)),
-                   **{"from": "2020-11-16"}, to="2020-11-16", with_group_class_subject_info=True))
+lessons = me.get_lessons(datetime.today(), datetime.today())
+
+for lesson in sort_lessons(lessons):
+    print(lesson.subject_name)
