@@ -7,7 +7,7 @@ import requests
 import dnevnik
 from dnevnik.scheduled_items import Lesson
 from dnevnik.student_homework import StudentHomework
-from dnevnik.utils import remove_unused_keys
+from dnevnik.utils import remove_unused_keys, sort_lessons
 
 
 class Client:
@@ -77,8 +77,9 @@ class Client:
     def get_lessons(self, date_from: datetime, date_to: datetime):
         lessons = self.make_request("/jersey/api/schedule_items",
                                     group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
-                                    **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"), with_group_class_subject_info=True)
+                                    **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"),
+                                    with_group_class_subject_info=True)
         result = []
         for lesson in lessons:
             result.append(Lesson(self, **remove_unused_keys(Lesson.UNUSED_DICT_KEYS, lesson)))
-        return result
+        return sort_lessons(result)
