@@ -8,3 +8,6 @@ unused/
 */__pycache__
 dnevnik_mos_ru.egg-info/
 dist/
+.gitignore
+*.pyc
+/unused/
