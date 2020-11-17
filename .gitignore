@@ -7,3 +7,4 @@ docs/API.html
 unused/
 */__pycache__
 dnevnik_mos_ru.egg-info/
+dist/

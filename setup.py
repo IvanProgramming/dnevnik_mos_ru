@@ -7,7 +7,7 @@ setup(
     version=__version__,
     url='https://github.com/IvanProgramming/dnevnik_mos_ru',
     author='Ivan Vlasov',
-    py_modules=find_packages(),
+    py_modules=["dnevnik"],
     install_requires=[
         'requests',
     ]
