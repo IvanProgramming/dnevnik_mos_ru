@@ -94,6 +94,6 @@ class Lesson:
     def get_teams_link(self):
         if self.lesson_type == "REMOTE":
             data = self.__client.make_request("/vcs/links/", scheduled_lesson_id=self.id)
-            return data["_embed"]["link_views"][0]["link_url"]
+            return data["_embedded"]["link_views"][0]["link_url"]
         else:
             return None
