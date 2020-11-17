@@ -10,7 +10,7 @@ Python библиотека, для удобного доступа к ЭЖД.
 
 # Импорт библиотеки
 import dnevnik
-# 
+# Импортируем datetime.datetime для использования функции today()
 from datetime import datetime
 
 # Данные для авторизации
