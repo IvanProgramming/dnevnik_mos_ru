@@ -8,4 +8,7 @@ setup(
     url='https://github.com/IvanProgramming/dnevnik_mos_ru',
     author='Ivan Vlasov',
     py_modules=find_packages(),
+    install_requires=[
+        'requests',
+    ]
 )
