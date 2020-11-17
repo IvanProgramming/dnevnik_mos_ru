@@ -55,22 +55,33 @@ class Lesson:
         "transferred_from_date",
         "transferred_to_date",
         "transferring_id",
+        "time",
         "building_id"  # TODO add building property
     ]
 
-    def __init__(self, client, id, building_id, canceled, class_unit_id, is_home_based, replaced, group_id, subject_id,
-                 subject_name, teacher_id):
+    def __init__(self, client, id, class_unit_id, is_home_based, replaced, group_id, subject_id,
+                 subject_name, teacher_id, lesson_number, group_name, room_id, room_name, iso_date_time, lesson_name,
+                 duration, cancelled, is_transferred, comment, lesson_type):
+        self.lesson_type = lesson_type
+        self.comment = comment
+        self.is_transferred = is_transferred
+        self.cancelled = cancelled
+        self.duration = duration
+        self.lesson_name = lesson_name
+        self.room_name = room_name
+        self.room_id = room_id
+        self.group_name = group_name
+        self.lesson_number = lesson_number
         self.__teacher_id = teacher_id
         self.subject_id = subject_id
         self.subject_name = subject_name
         self.group_id = group_id
         self.replaced = replaced
         self.__class_unit_id = class_unit_id
-        self.canceled = canceled
-        self.__building_id = building_id
         self.id = id
         self.__client = client
         self.is_home_based = is_home_based
+        self.lesson_datetime = datetime.fromisoformat(iso_date_time)
 
     @property
     def teacher(self):
@@ -79,3 +90,10 @@ class Lesson:
     @property
     def class_unit(self):
         return ClassUnit(self.__client, self.__class_unit_id)
+
+    def get_teams_link(self):
+        if self.lesson_type == "REMOTE":
+            data = self.__client.make_request("/vcs/links/", scheduled_lesson_id=self.id)
+            return data["_embed"]["link_views"][0]["link_url"]
+        else:
+            return None
