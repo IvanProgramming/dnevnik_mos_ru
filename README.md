@@ -1,4 +1,4 @@
-### dnevnik-mos-ru
+## dnevnik-mos-ru
 [![time tracker](https://wakatime.com/badge/github/IvanProgramming/dnevnik_mos_ru.svg)](https://wakatime.com/badge/github/IvanProgramming/dnevnik_mos_ru)
 [![CodeFactor](https://www.codefactor.io/repository/github/ivanprogramming/dnevnik_mos_ru/badge)](https://www.codefactor.io/repository/github/ivanprogramming/dnevnik_mos_ru)
 
@@ -38,3 +38,5 @@ for lesson in lessons:
     ```
     pip install dnevnik-mos-ru
     ```
+##### Получение токена
+Руководство по получению токена можно найти [здесь](/docs/auth_token.py)
