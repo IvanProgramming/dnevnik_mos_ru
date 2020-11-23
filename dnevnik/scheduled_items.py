@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from datetime import datetime, timedelta
 from dnevnik import Teacher, ClassUnit
 
 
@@ -12,16 +11,17 @@ class Lesson:
     is_transferred: bool = None
     lesson_datetime: datetime = None
     lesson_name: str = None
-    lesson_number: int = None
+    study_ordinal: int = None
     lesson_type: str = None
     replaced: bool = None
     room_id: int = None
     group_id: int = None
     subject_id: int = None
     subject_name: str = None
+
     # Service properties
     __client = None
-    __building_id: int = None
+    # __building_id: int = None
     __class_unit_id: int = None
     __teacher_id: int = None
     UNUSED_DICT_KEYS = [
@@ -41,6 +41,7 @@ class Lesson:
         "homeworks_to_give",
         "homeworks_to_verify",
         "lesson_id",
+        "lesson_number",
         "lesson_plan_id",
         "module_id",
         "module_name",
@@ -49,7 +50,6 @@ class Lesson:
         "schedule_id",
         "scripts",
         "scripts_new",
-        "study_ordinal",
         "topic_id",
         "topic_name",
         "transferred_from_date",
@@ -60,7 +60,7 @@ class Lesson:
     ]
 
     def __init__(self, client, id, class_unit_id, is_home_based, replaced, group_id, subject_id,
-                 subject_name, teacher_id, lesson_number, group_name, room_id, room_name, iso_date_time, lesson_name,
+                 subject_name, teacher_id, study_ordinal, group_name, room_id, room_name, iso_date_time, lesson_name,
                  duration, cancelled, is_transferred, comment, lesson_type):
         self.lesson_type = lesson_type
         self.comment = comment
@@ -71,7 +71,7 @@ class Lesson:
         self.room_name = room_name
         self.room_id = room_id
         self.group_name = group_name
-        self.lesson_number = lesson_number
+        self.study_ordinal = study_ordinal
         self.__teacher_id = teacher_id
         self.subject_id = subject_id
         self.subject_name = subject_name
@@ -82,6 +82,7 @@ class Lesson:
         self.__client = client
         self.is_home_based = is_home_based
         self.lesson_datetime = datetime.fromisoformat(iso_date_time)
+        self.lesson_end_datetime = self.lesson_datetime + timedelta(minutes=duration)
 
     @property
     def teacher(self):
@@ -97,3 +98,7 @@ class Lesson:
             return data["_embedded"]["link_views"][0]["link_url"]
         else:
             return None
+
+    @property
+    def lesson_number(self):
+        return self.study_ordinal
