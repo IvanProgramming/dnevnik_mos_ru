@@ -39,4 +39,4 @@ for lesson in lessons:
     pip install dnevnik-mos-ru
     ```
 ##### Получение токена
-Руководство по получению токена можно найти [здесь](/docs/auth_token.py)
+Руководство по получению токена можно найти [здесь](/docs/auth_token.md)
