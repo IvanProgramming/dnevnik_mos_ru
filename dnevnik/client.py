@@ -4,11 +4,11 @@ from typing import List
 
 import requests
 
-import dnevnik
+from dnevnik import StudentProfile
 from dnevnik.scheduled_items import Lesson
 from dnevnik.student_homework import StudentHomework
 from dnevnik.utils import remove_unused_keys, sort_lessons
-
+from dnevnik.mos_ru import MosRu
 
 class Client:
     """
@@ -54,9 +54,9 @@ class Client:
         return request.content.decode("utf-8")
 
     @property
-    def profile(self) -> dnevnik.student_profile.StudentProfile:
+    def profile(self) -> StudentProfile:
         """ Свойство, позволяет получить профиль пользователя """
-        return dnevnik.student_profile.StudentProfile(self)
+        return StudentProfile(self)
 
     def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> \
             List[StudentHomework]:
