@@ -1,14 +1,13 @@
 import json
+import requests
 from datetime import datetime
 from typing import List
-
-import requests
-
 from dnevnik import StudentProfile
+from dnevnik.mos_ru import MosRu
 from dnevnik.scheduled_items import Lesson
 from dnevnik.student_homework import StudentHomework
 from dnevnik.utils import remove_unused_keys, sort_lessons
-from dnevnik.mos_ru import MosRu
+
 
 class Client:
     """
@@ -16,8 +15,11 @@ class Client:
     """
     auth_token = None
     profile_id = None
+    mos_ru_obj = None
+    profile_index: int = None
 
-    def __init__(self, auth_token: str, profile_id: int):
+    def __init__(self, profile_id: int = 0, login: str = None, password: str = None, auth_token=None,
+                 profile_index: int = 0):
         """
         Конструктор клиента:
         param auth_token: Токен авторизации:
@@ -25,6 +27,13 @@ class Client:
         """
         self.auth_token = auth_token
         self.profile_id = profile_id
+        self.profile_index = profile_index
+        if login and password:
+            self.mos_ru_obj = MosRu(login, password)
+            answer = self.mos_ru_obj.dnevnik_authorization()
+            self.auth_token = answer["user_details"]["authentication_token"]
+            if not profile_id:
+                self.profile_id = answer["user_details"]["profiles"][self.profile_index]["id"]
 
     def make_request(self, method: str, raw=False, **query_options):
         """ Позволяет сделать запрос с передачей всех необходимых параметровю. Дополнительные аргументы передаются как
@@ -46,7 +55,14 @@ class Client:
         }
         data = query_options
         request = requests.get("https://dnevnik.mos.ru" + method, headers=parameters, params=query_options)
-        if request.status_code != 200:
+        if request.status_code == 403:
+            print(request.content.decode("utf-8"))
+            answer = self.mos_ru_obj.dnevnik_authorization()
+            if answer:
+                self.auth_token = answer["user_details"]["authentication_token"]
+            else:
+                raise Exception("Unauthorizated (403)!")
+        elif request.status_code not in range(200, 300):
             print(request.content.decode("utf-8"))
             raise Exception(f"Incorrect status_code ({request.status_code})!")
         if not raw:
@@ -74,11 +90,15 @@ class Client:
             homeworks.append(StudentHomework(self, **homework))
         return homeworks
 
-    def get_lessons(self, date_from: datetime, date_to: datetime):
+    def get_lessons(self, date_from: datetime = None, date_to: datetime = None):
         lessons = self.make_request("/jersey/api/schedule_items",
                                     group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
                                     **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"),
                                     with_group_class_subject_info=True)
+        if not date_to:
+            date_to = datetime.today()
+        if not date_from:
+            date_from = datetime.today()
         result = []
         for lesson in lessons:
             result.append(Lesson(self, **remove_unused_keys(Lesson.UNUSED_DICT_KEYS, lesson)))

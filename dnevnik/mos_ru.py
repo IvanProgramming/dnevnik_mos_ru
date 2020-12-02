@@ -1,11 +1,11 @@
 import json
 from datetime import datetime
-from pprint import pp
 from random import randint
 from time import sleep
 
 import requests
 from urllib3.util import parse_url
+
 
 class MosRu:
     """ Класс для авторизации через логин/пароль Mos.Ru """
@@ -24,7 +24,7 @@ class MosRu:
         self._password = password
 
     def dnevnik_authorization(self):
-        """ Функция для проведения авторизации """
+        """ Функция для проведения авторизации, возвращает ответ сервера с токеном и профайлами """
         ss = requests.Session()
         # ss.proxies = {
         #     'http': '85.26.146.169:80',
@@ -49,7 +49,9 @@ class MosRu:
             req = ss.get("https://dnevnik.mos.ru/lms/api/sudir/oauth/te?code={}".format(code), headers={
                 "Accept": "application/vnd.api.v3+json"
             })
-            return json.loads(req.content.decode("utf-8"))["user_details"]["authentication_token"]
+            return json.loads(req.content.decode("utf-8"))
         else:
-            raise Exception("Something went wrong!")
-
+            if login_request.status_code == 200:
+                raise Exception(
+                    f"Something went wrong! Status code ({login_request.status_code}) is incorrect."
+                    f" Maybe you entered incorrect login/password?")
