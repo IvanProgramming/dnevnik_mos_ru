@@ -14,18 +14,18 @@ import dnevnik
 from datetime import datetime
 
 # Данные для авторизации
-PROFILE_ID = 0000000
-AUTH_TOKEN = "token"
+LOGIN = ""
+PASSWORD = ""
 
 # Авторизуемся
-me = dnevnik.Client(AUTH_TOKEN, PROFILE_ID)
+me = dnevnik.Client(LOGIN, PASSWORD)
 
 # Получаем список уроков на сегодня
-lessons = me.get_lessons(date_from=datetime.today(), date_to=datetime.today())
+lessons = me.get_lessons()
 
 # Выводим уроки по порядку
 for lesson in lessons:
-    print("{0.ordinal_number}. {0.subject_name}".format(lesson))
+    print("{0.lesson_number}. {0.subject_name}".format(lesson))
 ```
 
 ##### Установка
@@ -38,5 +38,11 @@ for lesson in lessons:
     ```
     pip install dnevnik-mos-ru
     ```
-##### Получение токена
-Руководство по получению токена можно найти [здесь](/docs/auth_token.md)
+##### Документация API
+[Документацию](/docs/API.raml) в формате .RAML можно найти в в папке docs. Можно сгенерировать файл .html с помощью
+утилиты [raml2html](https://github.com/raml2html/raml2html)
+
+##### Документация библиотеки
+Документацию библиотеки можно будет найти [здесь](https://dnevnik.readthedocs.io/en/latest/). 
+
+

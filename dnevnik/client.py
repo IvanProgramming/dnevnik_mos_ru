@@ -91,14 +91,14 @@ class Client:
         return homeworks
 
     def get_lessons(self, date_from: datetime = None, date_to: datetime = None):
-        lessons = self.make_request("/jersey/api/schedule_items",
-                                    group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
-                                    **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"),
-                                    with_group_class_subject_info=True)
         if not date_to:
             date_to = datetime.today()
         if not date_from:
             date_from = datetime.today()
+        lessons = self.make_request("/jersey/api/schedule_items",
+                                    group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
+                                    **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"),
+                                    with_group_class_subject_info=True)
         result = []
         for lesson in lessons:
             result.append(Lesson(self, **remove_unused_keys(Lesson.UNUSED_DICT_KEYS, lesson)))

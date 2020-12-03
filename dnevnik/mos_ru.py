@@ -30,25 +30,22 @@ class MosRu:
         #     'http': '85.26.146.169:80',
         #     'https': '85.26.146.169:80'
         # }
-        ip_req = ss.get("http://icanhazip.com")
-        my_ip = ip_req.content.decode("utf-8").strip()
-        print(f"[+] Proxy ip - {ip_req.content.decode('utf-8')}")
-        login_form_request = ss.get(self.OAUTH_URL)
+        login_form_request = ss.get(self.OAUTH_URL, timeout=5)
         sleep(randint(10, 30) / 10)
-        ss.get("https://stats.mos.ru/handler/handler.js?time={time}".format(time=datetime.today().timestamp()))
+        ss.get("https://stats.mos.ru/handler/handler.js?time={time}".format(time=datetime.today().timestamp()), timeout=5)
         sleep(randint(10, 30) / 10)
         login_request = ss.post("https://login.mos.ru/sps/login/methods/password", data={
             "isDelayed": False,
             "login": self._login,
             "password": self._password,
-        }, allow_redirects=False)
+        }, allow_redirects=False, timeout=5)
         sleep(randint(10, 30) / 10)
         if login_request.status_code in range(300, 400):
             redirect_uri = login_request.headers["Location"]
             code = parse_url(redirect_uri).query.split("=")[1]
             req = ss.get("https://dnevnik.mos.ru/lms/api/sudir/oauth/te?code={}".format(code), headers={
                 "Accept": "application/vnd.api.v3+json"
-            })
+            }, timeout=5)
             return json.loads(req.content.decode("utf-8"))
         else:
             if login_request.status_code == 200:

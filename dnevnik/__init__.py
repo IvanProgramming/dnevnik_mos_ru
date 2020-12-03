@@ -5,4 +5,4 @@ from .teacher import Teacher
 from .student_profile import StudentProfile
 from .client import Client
 
-__version__ = "0.1.0a"
+__version__ = "1.0.0"
