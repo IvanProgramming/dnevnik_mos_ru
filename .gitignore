@@ -11,3 +11,4 @@ dist/
 .gitignore
 *.pyc
 /unused/
+testing_directory/main.py
