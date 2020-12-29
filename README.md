@@ -18,8 +18,11 @@ from datetime import datetime
 LOGIN = ""
 PASSWORD = ""
 
+# Данные для Selenium
+DRIVER_PATH = ""
+
 # Авторизуемся
-me = dnevnik.Client(LOGIN, PASSWORD)
+me = dnevnik.Client(login=LOGIN, password=PASSWORD, use_selenium=True, selenium_executable_path=DRIVER_PATH)
 
 # Получаем список уроков на сегодня
 lessons = me.get_lessons()
@@ -28,8 +31,17 @@ lessons = me.get_lessons()
 for lesson in lessons:
     print("{0.lesson_number}. {0.subject_name}".format(lesson))
 ```
+#### Установка
 
-##### Установка
+###### Установка Selenium
+Пока реализован только вариант с ChromeDriver.
+1. Зайти в Google Chrome. Три точки сверху -> Справка -> О браузуре Google Chrome
+2. Запомнить версию.
+3. [Отсюда](https://chromedriver.chromium.org/) скачать chromedriver для своей версии Chrome и своей OS
+4. Скопируйте исполняемый файл в какую нибудь папку и зпомните путь.
+5. В конструкторе Client параметр флаг use_selenium и внестие путь в selenium_executable_path
+
+###### Установка библиотеки
 
 - В Linux/MacOS 
     ```
@@ -38,7 +50,8 @@ for lesson in lessons:
 - В Windows
     ```
     pip install dnevnik-mos-ru
-    ```
+    ``` 
+ 
 ##### Документация API
 [Документацию](/docs/API.raml) в формате .RAML можно найти в в папке docs. Можно сгенерировать файл .html с помощью
 утилиты [raml2html](https://github.com/raml2html/raml2html)

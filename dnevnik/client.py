@@ -19,7 +19,7 @@ class Client:
     profile_index: int = None
 
     def __init__(self, profile_id: int = 0, login: str = None, password: str = None, auth_token=None,
-                 profile_index: int = 0):
+                 profile_index: int = 0, use_selenium: bool = True, selenium_executable_path: str = "chromedriver"):
         """
         Конструктор клиента:
         param auth_token: Токен авторизации:
@@ -28,13 +28,19 @@ class Client:
         self.auth_token = auth_token
         self.profile_id = profile_id
         self.profile_index = profile_index
-        if login and password:
+        if use_selenium and login and password:
+            from dnevnik.selenium_auth import SeleniumAuth
+            self.selenium = SeleniumAuth(login, password, selenium_executable_path)
+            self.auth_token = self.selenium.auth_token
+            self.profile_id = self.selenium.profile_id
+
+        if login and password and not use_selenium:
             self.mos_ru_obj = MosRu(login, password)
             answer = self.mos_ru_obj.dnevnik_authorization()
             self.auth_token = answer["user_details"]["authentication_token"]
             if not profile_id:
                 self.profile_id = answer["user_details"]["profiles"][self.profile_index]["id"]
-
+        print(f"[i] Auth-Token = {self.auth_token}\n[i] Profile-Id = {self.profile_id}")
     def make_request(self, method: str, raw=False, **query_options):
         """ Позволяет сделать запрос с передачей всех необходимых параметровю. Дополнительные аргументы передаются как
             kwargs, параметр raw указывает на требования возврата без обработки модулем json, method позволяет указать
@@ -57,11 +63,15 @@ class Client:
         request = requests.get("https://dnevnik.mos.ru" + method, headers=parameters, params=query_options)
         if request.status_code == 403:
             print(request.content.decode("utf-8"))
-            answer = self.mos_ru_obj.dnevnik_authorization()
-            if answer:
-                self.auth_token = answer["user_details"]["authentication_token"]
+            if not self.selenium:
+                answer = self.mos_ru_obj.dnevnik_authorization()
+                if answer:
+                    self.auth_token = answer["user_details"]["authentication_token"]
+                else:
+                    raise Exception("Unauthorizated (403)!")
             else:
-                raise Exception("Unauthorizated (403)!")
+                self.selenium.refresh_token()
+                self.auth_token = self.selenium.auth_token
         elif request.status_code not in range(200, 300):
             print(request.content.decode("utf-8"))
             raise Exception(f"Incorrect status_code ({request.status_code})!")
