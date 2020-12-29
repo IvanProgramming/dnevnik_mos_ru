@@ -20,6 +20,8 @@ class MosRu:
                 "&client_id=dnevnik.mos.ru"
 
     def __init__(self, login, password):
+        print("Warning! This class is Deprecated and can maker some issues, such as IP-Banning. Press enter to continue or stop a program!")
+        input()
         self._login = login
         self._password = password
 
