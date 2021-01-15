@@ -58,4 +58,5 @@ for lesson in lessons:
 ##### Документация библиотеки
 Документацию библиотеки можно будет найти [здесь](https://dnevnik.readthedocs.io/en/latest/). 
 
+##### Join [Discord Server](https://discord.gg/qMUVFTXRcM)
 
