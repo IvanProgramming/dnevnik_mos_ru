@@ -2,7 +2,7 @@
 [![time tracker](https://wakatime.com/badge/github/IvanProgramming/dnevnik_mos_ru.svg)](https://wakatime.com/badge/github/IvanProgramming/dnevnik_mos_ru)
 [![CodeFactor](https://www.codefactor.io/repository/github/ivanprogramming/dnevnik_mos_ru/badge)](https://www.codefactor.io/repository/github/ivanprogramming/dnevnik_mos_ru)
 [![](https://tokei.rs/b1/github/XAMPPRocky/tokei)](https://github.com/IvanProgramming/dnevnik_mos_ru)
-[![Discord](https://discord.gg/qMUVFTXRcM)](https://img.shields.io/discord/799693120358711356)
+[![Discord](https://img.shields.io/discord/799693120358711356)](https://discord.gg/qMUVFTXRcM)
 ![GitHub Repo stars](https://img.shields.io/github/stars/IvanProgramming/dnevnik_mos_ru?style=social)
 
 Python библиотека, для удобного доступа к ЭЖД.
