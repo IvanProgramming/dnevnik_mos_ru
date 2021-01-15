@@ -8,7 +8,6 @@ Python библиотека, для удобного доступа к ЭЖД.
 ##### Пример кода
 ```python
 # Вывод сегодняшних уроков
-
 # Импорт библиотеки
 import dnevnik
 
@@ -36,8 +35,8 @@ for lesson in lessons:
 1. Зайти в Google Chrome. Три точки сверху -> Справка -> О браузуре Google Chrome
 2. Запомнить версию.
 3. [Отсюда](https://chromedriver.chromium.org/) скачать chromedriver для своей версии Chrome и своей OS
-4. Скопируйте исполняемый файл в какую нибудь папку и зпомните путь.
-5. В конструкторе Client параметр флаг use_selenium и внестие путь в selenium_executable_path
+4. Скопируйте исполняемый файл в какую-нибудь папку и запомните путь.
+5. В конструкторе Client параметр флаг use_selenium и внесите путь в selenium_executable_path
 
 ###### Установка библиотеки
 
@@ -51,7 +50,7 @@ for lesson in lessons:
     ``` 
  
 ##### Документация API
-[Документацию](/docs/API.raml) в формате .RAML можно найти в в папке docs. Можно сгенерировать файл .html с помощью
+[Документацию API](/docs/API.raml) в формате .RAML можно найти в в папке docs. Можно сгенерировать файл .HTML с помощью
 утилиты [raml2html](https://github.com/raml2html/raml2html)
 
 ##### Документация библиотеки
