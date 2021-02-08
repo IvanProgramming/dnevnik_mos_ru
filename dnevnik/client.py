@@ -61,7 +61,7 @@ class Client:
         }
         data = query_options
         request = requests.get("https://dnevnik.mos.ru" + method, headers=parameters, params=query_options)
-        if request.status_code == 403:
+        if request.status_code in range(400, 500):
             print(request.content.decode("utf-8"))
             if not self.selenium:
                 answer = self.mos_ru_obj.dnevnik_authorization()
