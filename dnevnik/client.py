@@ -22,18 +22,25 @@ class Client:
                  profile_index: int = 0, use_selenium: bool = True, selenium_executable_path: str = "chromedriver"):
         """
         Конструктор клиента:
-        param auth_token: Токен авторизации:
+        param auth_token: Токен авторизации
         param profile_id: ID профиля
+        param login: Логин профиля на Mos.Ru
+        param password: Пароль профиля на Mos.Ru
+        profile_index: Номер профиля в аккаунте, начиная с нуля. Не работает при использовании Selenium
+        use_selenium: Флаг, определяющий использование Selenium
+        selemium_executable_path: Путь до исполняемого файла. Настоятельно рекомендуется выставить, если этот путь не прописан в path
         """
         self.auth_token = auth_token
         self.profile_id = profile_id
         self.profile_index = profile_index
+        # Логин через Selenium вместе с паролем и логином
         if use_selenium and login and password:
             from dnevnik.selenium_auth import SeleniumAuth
             self.selenium = SeleniumAuth(login, password, selenium_executable_path)
             self.auth_token = self.selenium.auth_token
+            # Да, я знаю, это надо починить!!!
             self.profile_id = self.selenium.profile_id
-
+        # Логин через реквесты (устаревший метод)
         if login and password and not use_selenium:
             self.mos_ru_obj = MosRu(login, password)
             answer = self.mos_ru_obj.dnevnik_authorization()
@@ -54,9 +61,6 @@ class Client:
             "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/80.0.3987.87 Safari/537.36 RuxitSynthetic/1.0 v8662719366318635631 "
                           "t6281935149377429786 ",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Dest": "empty",
             "Accept": "*/*"
         }
         data = query_options
@@ -86,7 +90,11 @@ class Client:
 
     def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> \
             List[StudentHomework]:
-        """ Свойство для получения домашних работ """
+        """ 
+        Шорткат для получения домашних работ:
+        param begin_prepared_date: Указывает на то, с какого числа нужно получить дз (По умолчанию сегодня)
+        param end_prepared_date: Указывает на то, по какое число нужно получить дз (По умолчанию сегодня)
+        """
         homeworks = []
         begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
         end_prepared_date = datetime.today() if not end_prepared_date else end_prepared_date
@@ -101,6 +109,11 @@ class Client:
         return homeworks
 
     def get_lessons(self, date_from: datetime = None, date_to: datetime = None):
+        """
+        Шорткат для получения уроков:
+        param date_from: Указывает с какого дня надо получить уроки (По умолчанию сегодня)
+        param date_to: Указывает по какой день надо получить уроки (По умолчанию сегодня)
+        """
         if not date_to:
             date_to = datetime.today()
         if not date_from:
@@ -113,3 +126,4 @@ class Client:
         for lesson in lessons:
             result.append(Lesson(self, **remove_unused_keys(Lesson.UNUSED_DICT_KEYS, lesson)))
         return sort_lessons(result)
+
