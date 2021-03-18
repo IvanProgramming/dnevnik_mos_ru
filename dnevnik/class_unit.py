@@ -15,16 +15,31 @@ class ClassUnit:
     __school_id: id = None
 
     def __init__(self, client, class_unit_id: int):
+        """
+        Конструктор:
+        param client: Объект класса dnevnik.Client нужен для выолнения запросов
+        param class_unit_id: id класса
+        """
         self.__client = client
         data = client.make_request(f"/core/api/class_units/{class_unit_id}")
-        self.id = data["id"]
-        self.display_name = data["display_name"]
-        self.letter = data["letter"]
-        self.name = data["name"]
-        self.ae_percentage = data["ae_percentage"]
-        self.student_count = data["student_count"]
-        self.home_based = data["home_based"]
+        # Id класса
+        self.id: int = data["id"]
+        # Имя класса (отображаемое)
+        self.display_name: str = data["display_name"]
+        # Буква класса
+        self.letter: str = data["letter"]
+        # Имя класса
+        self.name: str = data["name"]
+        # Процент учащихся с дополнителтным образованием
+        self.ae_percentage: float = data["ae_percentage"]
+        # Число учащихся
+        self.student_count: int = data["student_count"]
+        # Класс домашнего обучения
+        self.home_based: bool = data["home_based"]
 
     @property
     def school(self):
+        """
+        Школа класса
+        """
         return School(self.__client, self.__school_id)
