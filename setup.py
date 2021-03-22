@@ -10,6 +10,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         'requests',
-        'selenium'
+        'selenium',
+        'bs4',
+        'lxml'
     ]
 )
