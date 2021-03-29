@@ -48,8 +48,9 @@ class Client:
             if not profile_id:
                 self.profile_id = answer["user_details"]["profiles"][self.profile_index]["id"]
         print(f"[i] Auth-Token = {self.auth_token}\n[i] Profile-Id = {self.profile_id}")
+
     def make_request(self, method: str, raw=False, **query_options):
-        """ Позволяет сделать запрос с передачей всех необходимых параметровю. Дополнительные аргументы передаются как
+        """ Позволяет сделать запрос с передачей всех необходимых параметров. Дополнительные аргументы передаются как
             kwargs, параметр raw указывает на требования возврата без обработки модулем json, method позволяет указать
             метод API """
         parameters = {
@@ -85,7 +86,7 @@ class Client:
 
     @property
     def profile(self) -> StudentProfile:
-        """ Свойство, позволяет получить профиль пользователя """
+        """ Свойство позволяет получить профиль пользователя """
         return StudentProfile(self)
 
     def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> \
