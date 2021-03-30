@@ -33,23 +33,25 @@ class Client:
         self.auth_token = auth_token
         self.profile_id = profile_id
         self.profile_index = profile_index
+
         # Логин через Selenium вместе с паролем и логином
-        if use_selenium and login and password:
+        elif use_selenium and login and password:
             from dnevnik.selenium_auth import SeleniumAuth
             self.selenium = SeleniumAuth(login, password, selenium_executable_path)
             self.auth_token = self.selenium.auth_token
             # Да, я знаю, это надо починить!!!
             self.profile_id = self.selenium.profile_id
         # Логин через реквесты (устаревший метод)
-        if login and password and not use_selenium:
+        elif login and password and not use_selenium:
             self.mos_ru_obj = MosRu(login, password)
             answer = self.mos_ru_obj.dnevnik_authorization()
             self.auth_token = answer["user_details"]["authentication_token"]
             if not profile_id:
                 self.profile_id = answer["user_details"]["profiles"][self.profile_index]["id"]
         print(f"[i] Auth-Token = {self.auth_token}\n[i] Profile-Id = {self.profile_id}")
+
     def make_request(self, method: str, raw=False, **query_options):
-        """ Позволяет сделать запрос с передачей всех необходимых параметровю. Дополнительные аргументы передаются как
+        """ Позволяет сделать запрос с передачей всех необходимых параметров. Дополнительные аргументы передаются как
             kwargs, параметр raw указывает на требования возврата без обработки модулем json, method позволяет указать
             метод API """
         parameters = {
@@ -63,7 +65,7 @@ class Client:
                           "t6281935149377429786 ",
             "Accept": "*/*"
         }
-        data = query_options
+        
         request = requests.get("https://dnevnik.mos.ru" + method, headers=parameters, params=query_options)
         if request.status_code in range(400, 500):
             print(request.content.decode("utf-8"))
@@ -85,7 +87,7 @@ class Client:
 
     @property
     def profile(self) -> StudentProfile:
-        """ Свойство, позволяет получить профиль пользователя """
+        """ Свойство позволяет получить профиль пользователя """
         return StudentProfile(self)
 
     def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> \
@@ -98,6 +100,7 @@ class Client:
         homeworks = []
         begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
         end_prepared_date = datetime.today() if not end_prepared_date else end_prepared_date
+
         homeworks_raw = self.make_request("/core/api/student_homeworks",
                                           begin_prepared_date=begin_prepared_date.strftime("%d.%m.%Y"),
                                           end_prepared_date=end_prepared_date.strftime("%d.%m.%Y"))
@@ -114,10 +117,10 @@ class Client:
         param date_from: Указывает с какого дня надо получить уроки (По умолчанию сегодня)
         param date_to: Указывает по какой день надо получить уроки (По умолчанию сегодня)
         """
-        if not date_to:
-            date_to = datetime.today()
-        if not date_from:
-            date_from = datetime.today()
+        
+        date_from = datetime.today() if not date_from else date_from
+        date_to = datetime.today() if not date_to else date_to
+        
         lessons = self.make_request("/jersey/api/schedule_items",
                                     group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
                                     **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"),

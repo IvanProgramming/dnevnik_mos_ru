@@ -17,7 +17,7 @@ class ClassUnit:
     def __init__(self, client, class_unit_id: int):
         """
         Конструктор:
-        param client: Объект класса dnevnik.Client нужен для выолнения запросов
+        param client: Объект класса dnevnik.Client нужен для выполнения запросов
         param class_unit_id: id класса
         """
         self.__client = client

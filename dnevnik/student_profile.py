@@ -54,17 +54,17 @@ class StudentProfile:
 
     @property
     def class_unit(self):
-        """ Свойство, используется для получение объекта Class Unit """
+        """ Свойство используется для получение объекта Class Unit """
         return ClassUnit(self.__client, class_unit_id=self.__class_unit_id)
 
     @property
     def school(self):
-        """ Свойство, используется дл получения объекта School """
+        """ Свойство используется для получения объекта School """
         return School(self.__client, school_id=self.__school_id)
 
     @property
     def groups(self):
-        """ Свойство, для получения групп, в которых состоит учащийся """
+        """ Свойство для получения групп, в которых состоит учащийся """
         groups_list = []
         for group in self.__groups_list:
             del group["subgroup_ids"]
