@@ -33,15 +33,18 @@ class Client:
         self.auth_token = auth_token
         self.profile_id = profile_id
         self.profile_index = profile_index
+
+        if self.auth_token and self.profile_id != 0:
+            pass
         # Логин через Selenium вместе с паролем и логином
-        if use_selenium and login and password:
+        elif use_selenium and login and password:
             from dnevnik.selenium_auth import SeleniumAuth
             self.selenium = SeleniumAuth(login, password, selenium_executable_path)
             self.auth_token = self.selenium.auth_token
             # Да, я знаю, это надо починить!!!
             self.profile_id = self.selenium.profile_id
         # Логин через реквесты (устаревший метод)
-        if login and password and not use_selenium:
+        elif login and password and not use_selenium:
             self.mos_ru_obj = MosRu(login, password)
             answer = self.mos_ru_obj.dnevnik_authorization()
             self.auth_token = answer["user_details"]["authentication_token"]
