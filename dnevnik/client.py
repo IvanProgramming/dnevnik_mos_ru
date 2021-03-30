@@ -34,8 +34,6 @@ class Client:
         self.profile_id = profile_id
         self.profile_index = profile_index
 
-        if self.auth_token and self.profile_id != 0:
-            pass
         # Логин через Selenium вместе с паролем и логином
         elif use_selenium and login and password:
             from dnevnik.selenium_auth import SeleniumAuth
@@ -100,13 +98,8 @@ class Client:
         param end_prepared_date: Указывает на то, по какое число нужно получить дз (По умолчанию сегодня)
         """
         homeworks = []
-        
-        if not end_prepared_date and begin_prepared_date:
-            # Если указан только день с которого получать дз, но не указан по какой
-            end_prepared_date = begin_prepared_date
-        else:
-            begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
-            end_prepared_date = datetime.today() if not end_prepared_date else end_prepared_date
+        begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
+        end_prepared_date = datetime.today() if not end_prepared_date else end_prepared_date
 
         homeworks_raw = self.make_request("/core/api/student_homeworks",
                                           begin_prepared_date=begin_prepared_date.strftime("%d.%m.%Y"),
@@ -125,14 +118,8 @@ class Client:
         param date_to: Указывает по какой день надо получить уроки (По умолчанию сегодня)
         """
         
-        if not date_from:
-            date_from = datetime.today()
-        if not date_to:
-            if date_from:
-                # Если указан только день с которого получать уроки, но не указан по какой
-                date_to = date_from
-            else:
-                date_to = datetime.today()
+        date_from = datetime.today() if not date_from else date_from
+        date_to = datetime.today() if not date_to else date_to
         
         lessons = self.make_request("/jersey/api/schedule_items",
                                     group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
