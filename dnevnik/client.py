@@ -67,7 +67,7 @@ class Client:
                           "t6281935149377429786 ",
             "Accept": "*/*"
         }
-        data = query_options
+        
         request = requests.get("https://dnevnik.mos.ru" + method, headers=parameters, params=query_options)
         if request.status_code in range(400, 500):
             print(request.content.decode("utf-8"))
@@ -100,8 +100,14 @@ class Client:
         param end_prepared_date: Указывает на то, по какое число нужно получить дз (По умолчанию сегодня)
         """
         homeworks = []
-        begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
-        end_prepared_date = datetime.today() if not end_prepared_date else end_prepared_date
+        
+        if not end_prepared_date and begin_prepared_date:
+            # Если указан только день с которого получать дз, но не указан по какой
+            end_prepared_date = begin_prepared_date
+        else:
+            begin_prepared_date = datetime.today() if not begin_prepared_date else begin_prepared_date
+            end_prepared_date = datetime.today() if not end_prepared_date else end_prepared_date
+
         homeworks_raw = self.make_request("/core/api/student_homeworks",
                                           begin_prepared_date=begin_prepared_date.strftime("%d.%m.%Y"),
                                           end_prepared_date=end_prepared_date.strftime("%d.%m.%Y"))
@@ -118,10 +124,16 @@ class Client:
         param date_from: Указывает с какого дня надо получить уроки (По умолчанию сегодня)
         param date_to: Указывает по какой день надо получить уроки (По умолчанию сегодня)
         """
-        if not date_to:
-            date_to = datetime.today()
+        
         if not date_from:
             date_from = datetime.today()
+        if not date_to:
+            if date_from:
+                # Если указан только день с которого получать уроки, но не указан по какой
+                date_to = date_from
+            else:
+                date_to = datetime.today()
+        
         lessons = self.make_request("/jersey/api/schedule_items",
                                     group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
                                     **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"),
