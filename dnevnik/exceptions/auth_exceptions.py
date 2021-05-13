@@ -20,3 +20,8 @@ class IpBanError(Exception):
     def __str__(self):
         return "(https://youtu.be/PlPeZHGF6Uk)\nMaybe Moscow DIT changed procedure, so your IP was banned in mos.ru. Reload your router IP or " \
                "Try to use proxies. Or just report it in Github Issue and on Discord Server"
+
+
+class UnknownTokenError(Exception):
+    def __str__(self):
+        return "Your Token is expired, so use another!"
