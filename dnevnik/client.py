@@ -6,7 +6,7 @@ from dnevnik import StudentProfile
 from dnevnik.scheduled_items import Lesson
 from dnevnik.student_homework import StudentHomework
 from dnevnik.utils import remove_unused_keys, sort_lessons
-from dnevnik.selenium_auth import SeleniumAuth
+from dnevnik.auth_providers.selenium_auth import SeleniumAuthorization
 from dnevnik.exceptions.request_exceptions import UnknownStatusCodeError
 
 
@@ -17,7 +17,7 @@ class Client:
     auth_token = None
     profile_id = None
 
-    def __init__(self, auth_provider=SeleniumAuth, **auth_provider_kwargs):
+    def __init__(self, auth_provider=SeleniumAuthorization, **auth_provider_kwargs):
         """
         Конструктор класса.
         :param auth_provider: Класс, наследующийся от класса  BaseAuthProvider. По умолчанию Selenium Auth
