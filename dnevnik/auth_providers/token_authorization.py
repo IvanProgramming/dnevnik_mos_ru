@@ -9,4 +9,3 @@ class TokenAuthorization(BaseAuthProvider):
 
     def refresh_token(self):
         raise UnknownTokenError
-
