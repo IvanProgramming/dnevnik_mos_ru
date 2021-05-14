@@ -3,5 +3,8 @@ from .auth_exceptions import (
     CredentialsInvalidException,
     UnknownErrorException,
     IpBanError,
-    UnknownTokenError
+    UnknownTokenError,
+)
+from .request_exceptions import (
+    UnknownStatusCodeError
 )
