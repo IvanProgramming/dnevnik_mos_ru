@@ -6,10 +6,11 @@ import requests
 from bs4 import BeautifulSoup
 from urllib3.util import parse_url
 
+from dnevnik.base_auth_provider import BaseAuthProvider
 from dnevnik.exceptions import CredentialsInvalidException, UnknownErrorException, IpBanError
 
 
-class MosRu:
+class MosRu(BaseAuthProvider):
     """ Класс для авторизации через логин/пароль Mos.Ru """
 
     _login: str = None
@@ -23,19 +24,18 @@ class MosRu:
     EVENT = "361e8e40a297ed04767fb8c93b686874942ae3159e4445afa9fd864b4b501ee1"
     CSRF_ENDPOINT = "https://login.mos.ru/7ccd851171c76f27e541d264c4186df3"
     FORM_ACTION = "https://login.mos.ru/sps/login/methods/password"
+    auth_token = 0
 
-    def __init__(self, login: str, password: str, node_js_path: str = "node", **requests_params):
+    def __init__(self, login: str, password: str, **requests_params):
         """
         Конструктор объекта
         :param login: Логин пользователя
         :param password: Пароль пользователя
-        :param node_js_path: Необязательный параметр. Позволяет прописать путь к nodejs
         :param requests_params: Необязательный параметр. Позволяет добавить к каждому запросу дополнительные параметры.
         Список параметров можно найти в документации (https://requests.readthedocs.io/en/latest/api/#requests.request).
         """
         self._login: str = login
         self._password = password
-        self.node_js_path = node_js_path
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent":
@@ -43,7 +43,7 @@ class MosRu:
                 " Chrome/89.0.4389.91 Safari/537.36"})
         self.requests_params: dict = requests_params
 
-    def dnevnik_authorization(self):
+    def proceed_authorization(self):
         """ Функция для проведения авторизации, возвращает ответ сервера с токеном и профайлами """
         oauth_page = self.session.get(self.OAUTH_URL, **self.requests_params)
         if oauth_page.status_code == 403:
@@ -63,7 +63,7 @@ class MosRu:
             "alien": False
         }
         login_request = self.session.post(self.FORM_ACTION, data=data, allow_redirects=False)
-        if 300 < login_request.status_code < 400:
+        if login_request.status_code in range(301, 400):
             redirect_uri = login_request.headers["Location"]
             code = parse_url(redirect_uri).query.split("=")[1]
             req = self.session.get("https://dnevnik.mos.ru/lms/api/sudir/oauth/te?code={}".format(code), headers={
