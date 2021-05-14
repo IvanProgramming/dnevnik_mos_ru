@@ -3,10 +3,11 @@ import requests
 from datetime import datetime
 from typing import List
 from dnevnik import StudentProfile
-from dnevnik.mos_ru import MosRu
 from dnevnik.scheduled_items import Lesson
 from dnevnik.student_homework import StudentHomework
 from dnevnik.utils import remove_unused_keys, sort_lessons
+from dnevnik.selenium_auth import SeleniumAuth
+from dnevnik.exceptions.request_exceptions import UnknownStatusCodeError
 
 
 class Client:
@@ -15,45 +16,28 @@ class Client:
     """
     auth_token = None
     profile_id = None
-    mos_ru_obj = None
-    profile_index: int = None
 
-    def __init__(self, profile_id: int = 0, login: str = None, password: str = None, auth_token=None,
-                 profile_index: int = 0, use_selenium: bool = True, selenium_executable_path: str = "chromedriver"):
+    def __init__(self, auth_provider=SeleniumAuth, **auth_provider_kwargs):
         """
-        Конструктор клиента:
-        param auth_token: Токен авторизации
-        param profile_id: ID профиля
-        param login: Логин профиля на Mos.Ru
-        param password: Пароль профиля на Mos.Ru
-        profile_index: Номер профиля в аккаунте, начиная с нуля. Не работает при использовании Selenium
-        use_selenium: Флаг, определяющий использование Selenium
-        selemium_executable_path: Путь до исполняемого файла. Настоятельно рекомендуется выставить, если этот путь не прописан в path
+        Конструктор класса.
+        :param auth_provider: Класс, наследующийся от класса  BaseAuthProvider. По умолчанию Selenium Auth
+        :param auth_provider_kwargs: named-параметры для объекта AuthProvider
         """
-        self.auth_token = auth_token
-        self.profile_id = profile_id
-        self.profile_index = profile_index
+        self.provider = auth_provider(**auth_provider_kwargs)
+        self.provider.proceed_authorization()
+        self.auth_token = self.provider.auth_token
+        self.profile_id = self.provider.profile_id
 
-        # Логин через Selenium вместе с паролем и логином
-        elif use_selenium and login and password:
-            from dnevnik.selenium_auth import SeleniumAuth
-            self.selenium = SeleniumAuth(login, password, selenium_executable_path)
-            self.auth_token = self.selenium.auth_token
-            # Да, я знаю, это надо починить!!!
-            self.profile_id = self.selenium.profile_id
-        # Логин через реквесты (устаревший метод)
-        elif login and password and not use_selenium:
-            self.mos_ru_obj = MosRu(login, password)
-            answer = self.mos_ru_obj.dnevnik_authorization()
-            self.auth_token = answer["user_details"]["authentication_token"]
-            if not profile_id:
-                self.profile_id = answer["user_details"]["profiles"][self.profile_index]["id"]
-        print(f"[i] Auth-Token = {self.auth_token}\n[i] Profile-Id = {self.profile_id}")
-
-    def make_request(self, method: str, raw=False, **query_options):
+    def make_request(self, method: str, raw=False, token_refresh_on_fail=True, **query_options):
         """ Позволяет сделать запрос с передачей всех необходимых параметров. Дополнительные аргументы передаются как
             kwargs, параметр raw указывает на требования возврата без обработки модулем json, method позволяет указать
-            метод API """
+            метод API
+            :param method: Адрес метода
+            :param raw: Флаг, указывающий на необходимость "чистого" возврата
+            :param token_refresh_on_fail: флаг, который позволяет получить токен заново, при ошибке
+            :param query_options: Параметры запроса
+            :return: Dict или Str (в зависимости от raw)
+        """
         parameters = {
             "Auth-Token": self.auth_token,
             "Content-Type": "application/json",
@@ -65,23 +49,19 @@ class Client:
                           "t6281935149377429786 ",
             "Accept": "*/*"
         }
-        
+
         request = requests.get("https://dnevnik.mos.ru" + method, headers=parameters, params=query_options)
         if request.status_code in range(400, 500):
-            print(request.content.decode("utf-8"))
-            if not self.selenium:
-                answer = self.mos_ru_obj.dnevnik_authorization()
-                if answer:
-                    self.auth_token = answer["user_details"]["authentication_token"]
-                else:
-                    raise Exception("Unauthorizated (403)!")
+            # Пытаемся получить токен заново и повторить запрос
+            if token_refresh_on_fail:
+                self.provider.refresh_token()
+                return self.make_request(method=method, raw=raw, token_refresh_on_fail=False, **query_options)
             else:
-                self.selenium.refresh_token()
-                self.auth_token = self.selenium.auth_token
+                raise UnknownStatusCodeError(request.status_code)
         elif request.status_code not in range(200, 300):
-            print(request.content.decode("utf-8"))
-            raise Exception(f"Incorrect status_code ({request.status_code})!")
+            raise UnknownStatusCodeError(request.status_code)
         if not raw:
+            # Отпарсеный вывод
             return json.loads(request.content)
         return request.content.decode("utf-8")
 
@@ -92,7 +72,7 @@ class Client:
 
     def get_homeworks(self, begin_prepared_date: datetime = None, end_prepared_date: datetime = None) -> \
             List[StudentHomework]:
-        """ 
+        """
         Шорткат для получения домашних работ:
         param begin_prepared_date: Указывает на то, с какого числа нужно получить дз (По умолчанию сегодня)
         param end_prepared_date: Указывает на то, по какое число нужно получить дз (По умолчанию сегодня)
@@ -117,10 +97,10 @@ class Client:
         param date_from: Указывает с какого дня надо получить уроки (По умолчанию сегодня)
         param date_to: Указывает по какой день надо получить уроки (По умолчанию сегодня)
         """
-        
+
         date_from = datetime.today() if not date_from else date_from
         date_to = datetime.today() if not date_to else date_to
-        
+
         lessons = self.make_request("/jersey/api/schedule_items",
                                     group_id=",".join(map(lambda gr: str(gr.id), self.profile.groups)),
                                     **{"from": date_from.strftime("%Y-%m-%d")}, to=date_to.strftime("%Y-%m-%d"),
@@ -129,4 +109,3 @@ class Client:
         for lesson in lessons:
             result.append(Lesson(self, **remove_unused_keys(Lesson.UNUSED_DICT_KEYS, lesson)))
         return sort_lessons(result)
-
