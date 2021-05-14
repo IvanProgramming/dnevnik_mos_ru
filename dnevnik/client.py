@@ -29,14 +29,15 @@ class Client:
         self.profile_id = self.provider.profile_id
 
     def make_request(self, method: str, raw=False, token_refresh_on_fail=True, **query_options):
-        """ Позволяет сделать запрос с передачей всех необходимых параметров. Дополнительные аргументы передаются как
-            kwargs, параметр raw указывает на требования возврата без обработки модулем json, method позволяет указать
-            метод API
-            :param method: Адрес метода
-            :param raw: Флаг, указывающий на необходимость "чистого" возврата
-            :param token_refresh_on_fail: флаг, который позволяет получить токен заново, при ошибке
-            :param query_options: Параметры запроса
-            :return: Dict или Str (в зависимости от raw)
+        """
+        Позволяет сделать запрос с передачей всех необходимых параметров. Дополнительные аргументы передаются как
+        kwargs, параметр raw указывает на требования возврата без обработки модулем json, method позволяет указать
+        метод API
+        :param method: Адрес метода
+        :param raw: Флаг, указывающий на необходимость "чистого" возврата
+        :param token_refresh_on_fail: флаг, который позволяет получить токен заново, при ошибке
+        :param query_options: Параметры запроса
+        :return: Dict или Str (в зависимости от raw)
         """
         parameters = {
             "Auth-Token": self.auth_token,
