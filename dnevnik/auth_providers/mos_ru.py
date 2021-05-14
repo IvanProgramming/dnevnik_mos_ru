@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib3.util import parse_url
 
-from dnevnik.base_auth_provider import BaseAuthProvider
+from ..base_auth_provider import BaseAuthProvider
 from dnevnik.exceptions import CredentialsInvalidException, UnknownErrorException, IpBanError
 
 

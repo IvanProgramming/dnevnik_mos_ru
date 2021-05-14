@@ -1,4 +1,4 @@
-from dnevnik.base_auth_provider import BaseAuthProvider
+from ..base_auth_provider import BaseAuthProvider
 from ..exceptions import UnknownTokenError
 
 

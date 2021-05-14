@@ -1,5 +1,5 @@
 from time import sleep, time
-from base_auth_provider import BaseAuthProvider
+from ..base_auth_provider import BaseAuthProvider
 from selenium import webdriver
 
 
