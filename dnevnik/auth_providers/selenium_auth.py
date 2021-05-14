@@ -3,7 +3,7 @@ from base_auth_provider import BaseAuthProvider
 from selenium import webdriver
 
 
-class SeleniumAuth(BaseAuthProvider):
+class SeleniumAuthorization(BaseAuthProvider):
     auth_token: str = None
 
     def __init__(self, login, password, executable_path='chromedriver'):

@@ -10,7 +10,7 @@ from dnevnik.base_auth_provider import BaseAuthProvider
 from dnevnik.exceptions import CredentialsInvalidException, UnknownErrorException, IpBanError
 
 
-class MosRu(BaseAuthProvider):
+class RequestsAuthorization(BaseAuthProvider):
     """ Класс для авторизации через логин/пароль Mos.Ru """
 
     _login: str = None
