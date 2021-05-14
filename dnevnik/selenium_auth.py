@@ -1,25 +1,17 @@
 from time import sleep, time
-
+from base_auth_provider import BaseAuthProvider
 from selenium import webdriver
 
 
-class SeleniumAuth:
-    auth_token_value: str = None
+class SeleniumAuth(BaseAuthProvider):
+    auth_token: str = None
 
-    def __init__(self, login, password, executable_path):
-
+    def __init__(self, login, password, executable_path='chromedriver'):
         self.login = login
         self.password = password
         self.executable_path = executable_path
 
-    @property
-    def auth_token(self):
-        if not self.auth_token_value:
-            self.auth_token_value = self.obtain_token()
-        return self.auth_token_value
-
-    def obtain_token(self):
-        print("[i] Selenium auth started")
+    def proceed_authorization(self):
         start_time = time()
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-blink-features=AutomationControlled")
@@ -44,8 +36,7 @@ class SeleniumAuth:
         self.profile_id = int(driver.get_cookie("profile_id")["value"])
         driver.close()
         execution_time = time() - start_time
-        print(f"[i] Authentification took {execution_time}s")
-        return auth_token["value"]
+        self.auth_token = auth_token
 
     def refresh_token(self):
-        self.auth_token_value = self.obtain_token()
+        self.proceed_authorization()
