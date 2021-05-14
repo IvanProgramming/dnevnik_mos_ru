@@ -39,7 +39,5 @@ class ClassUnit:
 
     @property
     def school(self):
-        """
-        Школа класса
-        """
+        """ Школа класса """
         return School(self.__client, self.__school_id)
