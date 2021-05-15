@@ -3,12 +3,13 @@ import requests
 from datetime import datetime
 from typing import List
 from dnevnik import StudentProfile
+from dnevnik.academic_years import AcademicYear
 from dnevnik.scheduled_items import Lesson
 from dnevnik.student_homework import StudentHomework
 from dnevnik.utils import remove_unused_keys, sort_lessons
 from dnevnik.auth_providers.selenium_auth import SeleniumAuthorization
 from dnevnik.exceptions.request_exceptions import UnknownStatusCodeError
-
+from pydantic import parse_obj_as
 
 class Client:
     """
@@ -111,3 +112,12 @@ class Client:
         for lesson in lessons:
             result.append(Lesson(self, **remove_unused_keys(Lesson.UNUSED_DICT_KEYS, lesson)))
         return sort_lessons(result)
+
+    def get_academic_years(self, only_current_year=False) -> List[AcademicYear]:
+        """
+        Получает список учебных лет
+        :param only_current_year: Вернуть только текущий год
+        :return: Список из объектов AcademicYears
+        """
+        academic_years = self.make_request("/core/api/get_academic_years")
+        return parse_obj_as(List[AcademicYear], academic_years)

@@ -12,6 +12,7 @@ setup(
         'requests',
         'selenium',
         'bs4',
-        'lxml'
+        'lxml',
+        'pydantic'
     ]
 )

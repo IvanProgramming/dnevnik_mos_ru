@@ -7,5 +7,6 @@ try:
     from .teacher import Teacher
     from .student_profile import StudentProfile
     from .client import Client
+    from .academic_years import AcademicYear
 except ModuleNotFoundError:
     print("Error, while module parsing")
