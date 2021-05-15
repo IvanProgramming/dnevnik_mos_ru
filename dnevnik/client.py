@@ -119,5 +119,5 @@ class Client:
         :param only_current_year: Вернуть только текущий год
         :return: Список из объектов AcademicYears
         """
-        academic_years = self.make_request("/core/api/get_academic_years")
+        academic_years = self.make_request("/core/api/get_academic_years", only_current_year=only_current_year)
         return parse_obj_as(List[AcademicYear], academic_years)
