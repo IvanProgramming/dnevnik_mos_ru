@@ -8,5 +8,7 @@ try:
     from .student_profile import StudentProfile
     from .client import Client
     from .academic_years import AcademicYear
+    from .auth_providers import *
+    from .exceptions import *
 except ModuleNotFoundError:
     print("Error, while module parsing")
