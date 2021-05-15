@@ -52,8 +52,9 @@ class Client:
         }
 
         request = requests.get("https://dnevnik.mos.ru" + method, headers=parameters, params=query_options)
-        if request.status_code in range(400, 500):
+        if request.status_code in range(400, 501):
             # Пытаемся получить токен заново и повторить запрос
+            # 500 статус код означает также проблемы с авторизацией
             if token_refresh_on_fail:
                 self.provider.refresh_token()
                 return self.make_request(method=method, raw=raw, token_refresh_on_fail=False, **query_options)
