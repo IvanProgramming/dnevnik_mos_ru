@@ -15,7 +15,26 @@ baseUri: https://dnevnik.mos.ru
           required: false
           type: boolean
           example: true
-
+  /control_forms:
+    description: Формы контроля (к примеру контрольная или проверочная)
+    get:
+      description: GET-метод
+      queryParameters:
+        ids:
+          description: Уточнение id
+          required: false
+          type: string
+          example: 1,2,4
+  /control_forms/{id}:
+    description: Форма контроля
+    get:
+      description: GET-метод
+      queryParameters:
+        id:
+          description: Уточнение ID
+          required: true
+          type: integer
+          example: 124523
   /marks:
     description: Получить список оценок ученика
     get:
