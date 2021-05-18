@@ -1,15 +1,19 @@
 import json
-import requests
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
+
+import inject
+import requests
+from pydantic import parse_obj_as
+
 from dnevnik import StudentProfile
 from dnevnik.academic_years import AcademicYear
+from dnevnik.auth_providers.selenium_auth import SeleniumAuthorization
+from dnevnik.exceptions.request_exceptions import UnknownStatusCodeError
 from dnevnik.scheduled_items import Lesson
 from dnevnik.student_homework import StudentHomework
 from dnevnik.utils import remove_unused_keys, sort_lessons
-from dnevnik.auth_providers.selenium_auth import SeleniumAuthorization
-from dnevnik.exceptions.request_exceptions import UnknownStatusCodeError
-from pydantic import parse_obj_as
+
 
 class Client:
     """
@@ -28,6 +32,11 @@ class Client:
         self.provider.proceed_authorization()
         self.auth_token = self.provider.auth_token
         self.profile_id = self.provider.profile_id
+
+        def config(binder):
+            binder.bind(Client, self)
+
+        inject.configure(config)
 
     def make_request(self, method: str, raw=False, token_refresh_on_fail=True, **query_options):
         """
@@ -116,8 +125,30 @@ class Client:
     def get_academic_years(self, only_current_year=False) -> List[AcademicYear]:
         """
         Получает список учебных лет
-        :param only_current_year: Вернуть только текущий год
+        :param only_current_year: Вернуть только текущий год. По умолчанию False
         :return: Список из объектов AcademicYears
         """
         academic_years = self.make_request("/core/api/academic_years", only_current_year=only_current_year)
         return parse_obj_as(List[AcademicYear], academic_years)
+
+    def get_marks(self, created_at_from: date = date.today(), created_at_to: date = date.today(),
+                  scheduled_lesson_id: int = None):
+        """
+        Функция для получения списка оценок
+        :param scheduled_lesson_id: Необязательный параметр. Позволяет указать ID урока для которого надо найти оценку
+        :param created_at_from: Дата начала выборки. По умолчанию сегодня
+        :param created_at_to: Дата конца выборки. По умолчанию сегодня
+        :return: Список из оценок
+        """
+        # Костыль. Нужно для того, чтобы избежать Циклическую Зависимость
+        from dnevnik.mark import Mark
+        arguments = locals()
+        del arguments['self'], arguments['Mark']
+        if not scheduled_lesson_id:
+            del arguments['scheduled_lesson_id']
+        arguments['created_at_from'] = arguments['created_at_from'].strftime('%d.%m.%Y')
+        arguments['created_at_to'] = arguments['created_at_to'].strftime('%d.%m.%Y')
+        print(arguments)
+        marks = self.make_request('/core/api/marks', **arguments)
+        return parse_obj_as(List[Mark], marks)
+
