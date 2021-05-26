@@ -4,6 +4,7 @@
 [![](https://tokei.rs/b1/github/XAMPPRocky/tokei)](https://github.com/IvanProgramming/dnevnik_mos_ru)
 [![Discord](https://img.shields.io/discord/799693120358711356)](https://discord.gg/qMUVFTXRcM)
 ![GitHub Repo stars](https://img.shields.io/github/stars/IvanProgramming/dnevnik_mos_ru?style=social)
+![PyPI](https://img.shields.io/pypi/v/dnevnik_mos_ru?label=PyPi)
 
 Python библиотека, для удобного доступа к ЭЖД.
 
