@@ -22,7 +22,7 @@ PASSWORD = ""
 DRIVER_PATH = ""
 
 # Авторизуемся
-me = dnevnik.Client(login=LOGIN, password=PASSWORD, use_selenium=True, selenium_executable_path=DRIVER_PATH)
+me = dnevnik.Client(login=LOGIN, password=PASSWORD, selenium_executable_path=DRIVER_PATH)
 
 # Получаем список уроков на сегодня
 lessons = me.get_lessons()
