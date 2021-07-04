@@ -10,5 +10,6 @@ try:
     from .academic_years import AcademicYear
     from .auth_providers import *
     from .exceptions import *
+    from base_auth_provider import BaseAuthProvider
 except ModuleNotFoundError:
     print("Error, while module parsing")
