@@ -15,4 +15,4 @@ def get_openapi_schema(request):
     schemas = SchemaGenerator(
         {"openapi": "3.0.0", "info": {"title": "Lastic REST API", "version": "1.0.0"}}
     )
-    return JSONResponse(schemas.get_schema(routes=APP_ROUTES))
+    return schemas.OpenAPIResponse(request)
