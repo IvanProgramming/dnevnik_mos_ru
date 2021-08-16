@@ -40,19 +40,24 @@ To get a local copy up and running follow these simple steps.
 ### Deployment
 
 1. Make a docker image (specify tag in %tag%)
-```shell
-docker build -t %tag% ./
-```
+   ```shell
+   docker build -t %tag% ./
+   ```
 2. Save it 
-```shell
-docker image save > image
-```
+   ```shell
+   docker image save > image
+   ```
 3. Transfer it to server
 4. Load docker image
-```shell
-docker image load -i image
-```
+   ```shell
+   docker image load -i image
+   ```
 5. Create docker container and start it in slient mode
-```shell
-docker run -dp 80:80 %tag% 
-```
+   ```shell
+   docker run -dp 80:80 %tag% 
+   ```
+
+### OpenAPI schema generation
+If you need fresh API schema just run this server in DEBUG mode and make a request to `localhost:8000/schema`
+
+After this you can import it to Postman, or generate MD with [this](https://github.com/Aurora81/openapi2md) tool
