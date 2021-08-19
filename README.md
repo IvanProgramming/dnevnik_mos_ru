@@ -6,10 +6,9 @@
 
 ### Built With
 
-* [Firestore](https://firebase.google.com/docs/firestore)  (as a main database)
 * [Starlette](https://www.starlette.io/)
 * [Pydantic](https://pydantic-docs.helpmanual.io/) 
-* [Redis](https://redis.io) (for caching)
+* [MongoDB](https://www.mongodb.com/) (As a main database)
 
 
 
