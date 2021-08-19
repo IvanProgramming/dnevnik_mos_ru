@@ -12,8 +12,13 @@ DEBUG = getenv("LASTIC_DEBUG") == "true"
 if DEBUG:
     ALLOWED_HOSTS = ["127.0.0.1", "localhost", "lastic.prbla.ru"]
     REQUIRE_HTTPS = False
+
 # Production
 else:
     ALLOWED_HOSTS = ["lastic.prbla.ru"]
     REQUIRE_HTTPS = True
 
+DB_URL = "mongodb://localhost:27017"
+
+# Expire time sets in seconds
+EXP_TIME = 30

@@ -6,8 +6,16 @@
 """
 
 from starlette.applications import Starlette
-from routes import APP_ROUTES
-from middlewares import APP_MIDDLEWARES
 
-app = Starlette(routes=APP_ROUTES, middleware=APP_MIDDLEWARES)
- 
+from middlewares import APP_MIDDLEWARES
+from model.connections import connections
+from routes import APP_ROUTES
+
+
+async def init_connections():
+    connections.start_connections()
+
+
+app = Starlette(routes=APP_ROUTES,
+                middleware=APP_MIDDLEWARES,
+                on_startup=[init_connections])
