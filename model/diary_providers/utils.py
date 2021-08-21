@@ -19,4 +19,4 @@ def get_provider_by_unique_name(unique_name: str) -> BaseDiaryProvider:
     for provider in PROVIDERS:
         if provider.unique_name == unique_name:
             return provider
-    raise NoSuchDairyProvider
+    raise NoSuchDairyProvider(unique_name)
