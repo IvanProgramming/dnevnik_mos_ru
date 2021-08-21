@@ -21,5 +21,5 @@ class TokenInvalidException(ApiException):
 class PhoneIsNotPresented(ApiException):
     """ This exception is raised if mobile phone is not provided in Diary Provider """
     status_code = 4
-    details = "Mobile phone is not presented in API resonse"
+    details = "Mobile phone is not presented in API response"
     http_code = 403
