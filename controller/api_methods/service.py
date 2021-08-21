@@ -7,7 +7,6 @@ async def ping(request):
         200:
             description: pong anwser
             examples:
-                {"status": "ok", "data": {"pong": "pong"}}
+                {"status": true, "data": {}}
     """
-    return OKResponse({"pong": "pong"})
-
+    return OKResponse({})
