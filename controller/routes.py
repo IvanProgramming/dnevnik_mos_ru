@@ -8,5 +8,7 @@ dev_routes = [
 ]
 
 routes = [
-    Route("/ping", endpoint=ping)
-] + dev_routes if DEBUG else []
+             Route("/ping", endpoint=ping),
+             Route("/profile", endpoint=ProfileEndpoint),
+             Route("/friends", endpoint=FriendsEndpoint)
+         ] + (dev_routes if DEBUG else [])
