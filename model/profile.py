@@ -1,3 +1,4 @@
+from exceptions.profiles import SelfPhoneNumberError, InvalidPhoneNumberError, AlreadyInFriendsError
 from model.connections import connections
 from model.friend_profile import FriendProfile
 from settings import AVAILABLE_EMOJI
@@ -82,6 +83,20 @@ class Profile:
             ]})
         return Profile.parse_friends_cursor(friends_cursor, as_dict)
 
+    def add_friend(self, phone_number: str):
+        """ Adding friend by his phone_number """
+        # YES IT LOOKS SCARY, BUT I THINK IT IS THE BEST SOLUTION HERE
+        if not self.exists(phone_number):
+            raise InvalidPhoneNumberError
+        if phone_number in self.friends:
+            raise AlreadyInFriendsError
+        if phone_number == self.phone_number:
+            raise SelfPhoneNumberError
+        connections.profiles_db.update_one({"phone_number": self.phone_number},
+                                           {"$push": {"friends": phone_number}})
+        is_online = bool(connections.tokens_db.count_documents({"phone_number": phone_number}))
+        return FriendProfile(**Profile.profile_by_phone(phone_number).as_json(), is_online=is_online).dict()
+
     def get_pending(self, as_dict=True):
         """ Returns pending requests """
         pending_cursor = connections.profiles_db.find({
@@ -158,3 +173,10 @@ class Profile:
                            name=result["name"],
                            school_name=result["school_name"])
         return None
+
+    def as_friend_profile(self, fetch_online=False):
+        if fetch_online:
+            is_online = bool(connections.tokens_db.count_documents({"phone_number": self.phone_number}))
+        else:
+            is_online = False
+        return FriendProfile(**self.as_json(), is_online=is_online)
