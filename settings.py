@@ -21,4 +21,28 @@ else:
 DB_URL = "mongodb://localhost:27017"
 
 # Expire time sets in seconds
-EXP_TIME = 30
+EXP_TIME = 4 * 60
+
+TOKEN_FREE_METHODS = [
+    "/ping",
+    "/schema"
+]
+
+AVAILABLE_EMOJI = [
+    "smiley_cat",
+    "fox_face",
+    "unicorn",
+    "hamster",
+    "frog",
+    "tropical_fish",
+    "grapes",
+    "pizza",
+    "ramen",
+    "cookie",
+    "rice",
+    "pineapple",
+    "bagel",
+    "taco",
+    "helicopter",
+    "rocket"
+]
