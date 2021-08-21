@@ -8,4 +8,4 @@ def test_ping():
     client = TestClient(app)
     resp = client.get("/ping")
     print(resp)
-    assert resp.json()["data"] == {"pong": "pong"}
+    assert resp.json()["data"] == {}
