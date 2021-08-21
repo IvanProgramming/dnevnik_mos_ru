@@ -7,6 +7,7 @@
 
 from starlette.applications import Starlette
 
+from exceptions import EXCEPTION_HANDLERS
 from middlewares import APP_MIDDLEWARES
 from model.connections import connections
 from routes import APP_ROUTES
@@ -18,4 +19,5 @@ async def init_connections():
 
 app = Starlette(routes=APP_ROUTES,
                 middleware=APP_MIDDLEWARES,
-                on_startup=[init_connections])
+                on_startup=[init_connections],
+                exception_handlers=EXCEPTION_HANDLERS)
