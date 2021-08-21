@@ -1,3 +1,6 @@
+from model.profile import Profile
+
+
 class BaseDiaryProvider:
     """ Base Dairy Provider. Any Dairy provider should inherent this class"""
     name: str
@@ -15,4 +18,9 @@ class BaseDiaryProvider:
     @staticmethod
     async def get_phone_number(token: str) -> str:
         """ Makes request to server and returns phone number by token """
+        pass
+
+    @staticmethod
+    async def get_profile_instance(token: str) -> Profile:
+        """ Returns user profile, fetched from diary"""
         pass

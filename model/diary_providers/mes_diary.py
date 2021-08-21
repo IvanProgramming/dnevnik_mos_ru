@@ -1,7 +1,8 @@
 from aiohttp import request
 
-from exceptions.providers import TokenInvalidException
+from exceptions.providers import TokenInvalidException, PhoneIsNotPresented
 from model.diary_providers.base_diary_provider import BaseDiaryProvider
+from model.profile import Profile
 
 
 class MesDiary(BaseDiaryProvider):
@@ -15,11 +16,23 @@ class MesDiary(BaseDiaryProvider):
 
     @staticmethod
     async def get_phone_number(token: str, sudir_access_token: str = None) -> str:
-        # TODO: Solve problem with this token verify endpoint!
         async with request("POST", MesDiary.token_verification_url, json={
             "auth_token": token
         }) as resp:
-            print(await resp.text())
             if resp.status == 200:
                 return (await resp.json())["info"]["phone_number"]
+            raise TokenInvalidException
+
+    @staticmethod
+    async def get_profile_instance(token: str) -> Profile:
+        async with request("POST", MesDiary.token_verification_url, json={
+            "auth_token": token
+        }) as resp:
+            if resp.status == 200:
+                response_dict = await resp.json()
+                if response_dict["phone_number"] == "":
+                    raise PhoneIsNotPresented
+                return Profile(name=response_dict["first_name"],
+                               phone_number=response_dict["phone_number"],
+                               school_name=response_dict["profiles"][0]["school_shortname"])
             raise TokenInvalidException
