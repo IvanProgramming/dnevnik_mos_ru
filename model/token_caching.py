@@ -44,6 +44,5 @@ async def get_cached_phone(token, diary):
     """
     if exists(token, diary):
         data = connections.tokens_db.find_one({"token": token, "diary": diary})
-        print(data)
         return data["phone_number"]
     raise TokenInvalidException
