@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -6,6 +8,6 @@ class FriendProfile(BaseModel):
     phone_number: str
     school_name: str
     friends_count: int
-    color: list[int]
+    color: List[int]
     emoji: str
     is_online: bool
