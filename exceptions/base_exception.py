@@ -15,3 +15,12 @@ class ApiException(Exception):
     @property
     def response(self):
         return ErrorResponse({"details": self.details, "status_code": self.status_code}, status_code=self.http_code)
+
+
+async def http_exception(request, exc):
+    return exc.response
+
+
+EXCEPTION_HANDLERS = {
+    ApiException: http_exception
+}
