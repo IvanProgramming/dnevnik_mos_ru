@@ -1,5 +1,4 @@
-from base64 import b64decode
-from json import loads
+from bson import decode
 
 from exceptions.providers import TokenInvalidException
 from model.diary_providers.base_diary_provider import BaseDiaryProvider
@@ -21,13 +20,13 @@ class FakeDiaryProvider(BaseDiaryProvider):
     @staticmethod
     async def get_phone_number(token: str) -> str:
         if await FakeDiaryProvider.is_token_correct(token):
-            token_json = loads(b64decode(token.split(":")[1]).decode("utf-8"))
+            token_json = decode(bytes.fromhex(token))
             return token_json["phone_number"]
         raise TokenInvalidException
 
     @staticmethod
     async def get_profile_instance(token: str) -> Profile:
         if await FakeDiaryProvider.is_token_correct(token):
-            token_json = loads(b64decode(token.split(":")[1]).decode("utf-8"))
+            token_json = decode(bytes.fromhex(token))
             return Profile(**token_json)
         raise TokenInvalidException
