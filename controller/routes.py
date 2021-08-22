@@ -8,7 +8,8 @@ dev_routes = [
 ]
 
 routes = [
-             Route("/ping", endpoint=ping),
+             Route("/ping", endpoint=ping, methods=["GET"]),
              Route("/profile", endpoint=ProfileEndpoint),
-             Route("/friends", endpoint=FriendsEndpoint)
+             Route("/friends", endpoint=FriendsEndpoint),
+             Route("/friends/search", endpoint=search_friend, methods=["GET"])
          ] + (dev_routes if DEBUG else [])
