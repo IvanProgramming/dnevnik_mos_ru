@@ -25,7 +25,10 @@ EXP_TIME = 4 * 60
 
 TOKEN_FREE_METHODS = [
     "/ping",
-    "/schema"
+    "/schema",
+    "/robots.txt",
+    "/security.txt",
+    "/favicon.ico"
 ]
 
 AVAILABLE_EMOJI = [
