@@ -37,6 +37,12 @@ class FriendsEndpoint(HTTPEndpoint):
             return OKResponse(profile.add_friend(phone_number))
         raise InvalidPhoneNumberError
 
+    async def delete(self, request: Request):
+        profile = request.state.profile
+        phone_number = (await request.json())["phone_number"]
+        profile.delete_friend(phone_number)
+        return OKResponse({})
+
 
 async def search_friend(request: Request):
     """
