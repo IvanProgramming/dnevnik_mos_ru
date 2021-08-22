@@ -17,3 +17,21 @@ class AlreadyInFriendsError(ApiException):
     status_code = 13
     http_code = 400
     details = "Friend is already added to your friend list"
+
+
+class EmojiIsNotSupported(ApiException):
+    status_code = 14
+    http_code = 403
+    details = "This emoji is not included in white list"
+
+
+class ColorModelError(ApiException):
+    status_code = 15
+    http_code = 400
+    details = "Color model is incorrect"
+
+
+class NicknameTooLongError(ApiException):
+    status_code = 16
+    http_code = 400
+    details = "Nickname is too long"
