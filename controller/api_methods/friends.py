@@ -2,6 +2,7 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 
 from exceptions.profiles import InvalidPhoneNumberError
+from model.profile import Profile
 from view.api_response import OKResponse
 
 
@@ -35,3 +36,21 @@ class FriendsEndpoint(HTTPEndpoint):
         if phone_number:
             return OKResponse(profile.add_friend(phone_number))
         raise InvalidPhoneNumberError
+
+
+async def search_friend(request: Request):
+    """
+    responses:
+        200:
+            description: If more than 2 phones passed, returns data of everyone, how is in parabola, if one, returns only his profile data
+        404:
+            description: if one passed - Friend is not in parabola
+    """
+    phone_numbers = (await request.json())["phone_numbers"]
+    if len(phone_numbers) == 1:
+        existing = Profile.fetch_existing(phone_numbers)
+        if existing:
+            return OKResponse(existing[0])
+        raise InvalidPhoneNumberError
+    else:
+        return OKResponse(Profile.fetch_existing(phone_numbers))
