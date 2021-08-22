@@ -5,18 +5,18 @@ from model.diary_providers.base_diary_provider import BaseDiaryProvider
 from model.profile import Profile
 
 
-class MesDiary(BaseDiaryProvider):
+class MeshDiary(BaseDiaryProvider):
     """
-        MES Diary (Moscow Electronic School) is moscow electron dairy.
+        MESH Diary is moscow digital dairy.
         You can find it on https://dnevnik.mos.ru
     """
     name = "Дневник МЭШ"
     token_verification_url = "https://dnevnik.mos.ru/lms/api/sessions"
-    unique_name = "mes"
+    unique_name = "mesh"
 
     @staticmethod
     async def get_phone_number(token: str, sudir_access_token: str = None) -> str:
-        async with request("POST", MesDiary.token_verification_url, json={
+        async with request("POST", MeshDiary.token_verification_url, json={
             "auth_token": token
         }) as resp:
             if resp.status == 200:
@@ -25,7 +25,7 @@ class MesDiary(BaseDiaryProvider):
 
     @staticmethod
     async def get_profile_instance(token: str) -> Profile:
-        async with request("POST", MesDiary.token_verification_url, json={
+        async with request("POST", MeshDiary.token_verification_url, json={
             "auth_token": token
         }) as resp:
             if resp.status == 200:

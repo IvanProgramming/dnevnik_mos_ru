@@ -1,10 +1,10 @@
 from exceptions.providers import NoSuchDairyProvider
-from model import MesDiary, FakeDiaryProvider
+from model import MeshDiary, FakeDiaryProvider
 from model.diary_providers.base_diary_provider import BaseDiaryProvider
 
 # List of Diary Providers. If you create ones, you should add it here
 PROVIDERS = [
-    MesDiary,
+    MeshDiary,
     FakeDiaryProvider
 ]
 
