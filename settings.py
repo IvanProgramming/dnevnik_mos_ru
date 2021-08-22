@@ -23,6 +23,9 @@ DB_URL = "mongodb://localhost:27017"
 # Expire time sets in seconds
 EXP_TIME = 4 * 60
 
+# Event expire time
+EVENT_EXP_TIME = 24 * 3600
+
 TOKEN_FREE_METHODS = [
     "/ping",
     "/schema",
