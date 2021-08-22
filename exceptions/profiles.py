@@ -35,3 +35,9 @@ class NicknameTooLongError(ApiException):
     status_code = 16
     http_code = 400
     details = "Nickname is too long"
+
+
+class NotInFriendshipError(ApiException):
+    status_code = 17
+    http_code = 404
+    details = "You trying to remove from friend person, that is not in your friend list"
