@@ -1,3 +1,4 @@
+from hashlib import md5
 from typing import List
 
 from controller.utils import normalize_phones, normalize_phone
@@ -9,7 +10,8 @@ from settings import AVAILABLE_EMOJI
 
 
 class Profile:
-    def __init__(self, name: str, phone_number: str, school_name: str, friends=None, _id=0, color=None, emoji=None,
+    def __init__(self, name: str, phone_number: str, school_name: str, gender: str, friends=None, _id=0, color=None,
+                 emoji=None,
                  nickname=None):
         """ Constructor of model """
         if friends is None:
@@ -24,6 +26,7 @@ class Profile:
         self.nickname = nickname
         self.phone_number = normalize_phone(phone_number)
         self.school_name = school_name
+        self.gender = gender
         self.color = color
         self.emoji = emoji
         self.friends = friends
@@ -40,7 +43,8 @@ class Profile:
                 "school_name": self.school_name,
                 "friends": self.friends,
                 "color": self.color,
-                "emoji": self.emoji
+                "emoji": self.emoji,
+                "gender": self.gender
             }
             new_id = connections.profiles_db.insert_one(new_profile).inserted_id
             self._id = new_id
@@ -82,6 +86,16 @@ class Profile:
             "school_name": self.school_name,
             "friends_count": self.count_friends(),
             "color": self.color,
+            "emoji": self.emoji,
+            "gender": self.gender
+        }
+
+    def as_safe_json(self):
+        return {
+            "nickname": self.nickname,
+            "phone_number": self.phone_number,
+            "friends_count": self.count_friends(),
+            "color": self.color,
             "emoji": self.emoji
         }
 
@@ -92,7 +106,7 @@ class Profile:
                 {"phone_number": {"$in": self.friends}},
                 {"friends": self.phone_number}
             ]})
-        return Profile.parse_friends_cursor(friends_cursor, as_dict)
+        return Profile.parse_friends_cursor(friends_cursor, "friend", self.phone_number, as_dict)
 
     def add_friend(self, phone_number: str):
         """ Adding friend by his phone_number """
@@ -107,7 +121,7 @@ class Profile:
                                            {"$addToSet": {"friends": phone_number}})
         self.friends.append(phone_number)
         is_online = bool(connections.tokens_db.count_documents({"phone_number": phone_number}))
-        return FriendProfile(**Profile.profile_by_phone(phone_number).as_json(), is_online=is_online).dict()
+        friend_profile = Profile.profile_by_phone(phone_number)
 
     def get_pending(self, as_dict=True):
         """ Returns pending requests """
@@ -117,7 +131,7 @@ class Profile:
                 {"phone_number": {"$not": {"$in": self.friends}}}
             ]
         })
-        return Profile.parse_friends_cursor(pending_cursor, as_dict)
+        return Profile.parse_friends_cursor(pending_cursor, "pending", self.phone_number, as_dict)
 
     def get_requests(self, as_dict=True):
         """ Returns your friend requests """
@@ -127,7 +141,7 @@ class Profile:
                 {"phone_number": {"$in": self.friends}}
             ]
         })
-        return Profile.parse_friends_cursor(request_cursor, as_dict)
+        return Profile.parse_friends_cursor(request_cursor, "request", self.phone_number, as_dict)
 
     def edit_profile(self, nickname=None, emoji=None, color=None):
         """ Edits user profile """
@@ -160,9 +174,10 @@ class Profile:
             raise NotInFriendshipError
 
         connections.profiles_db.update_one({"phone_number": self.phone_number}, {"$pull": {"friends": phone_number}})
+        connections.profiles_db.update_one({"phone_number": phone_number}, {"$pull": {"friends": self.phone_number}})
 
     @staticmethod
-    def parse_friends_cursor(friends_cursor, as_dict=True):
+    def parse_friends_cursor(friends_cursor, status: str, owner_phone, as_dict=True):
         """ Parses MongoDB query to FriendProfile list]
             :param as_dict: Shows, if returned result should be a dict
         """
@@ -170,7 +185,8 @@ class Profile:
         phones_list = []
         for friend in friends_cursor:
             friend_profile = Profile(**friend)
-            friends_list.append(friend_profile.as_friend_profile(fetch_online=False))
+            friends_list.append(
+                friend_profile.as_friend_profile(owner_phone=owner_phone, friend_status=status, fetch_online=False))
             phones_list.append(friend_profile.phone_number)
         online_phones = list(map(lambda x: x["phone_number"], connections.tokens_db.find({
             "phone_number": {"$in": phones_list}
@@ -185,13 +201,27 @@ class Profile:
             return dicted_friends_list
         return friends_list
 
-    def as_friend_profile(self, fetch_online=False):
+    def get_friend_status(self, phone_number, reverse):
+        phone_profile = self.profile_by_phone(phone_number)
+        if phone_number in self.friends:
+            if self.phone_number in phone_profile.friends:
+                return "friend"
+            return "request" if not reverse else "pending"
+        if self.phone_number in phone_profile.friends:
+            return "pending" if not reverse else "request"
+        return "alien"
+
+    def as_friend_profile(self, owner_phone: str, friend_status=None, fetch_online=False):
         """ Converts  profile to FriendProfile """
         if fetch_online:
             is_online = bool(connections.tokens_db.count_documents({"phone_number": self.phone_number}))
         else:
             is_online = False
-        return FriendProfile(**self.as_json(), is_online=is_online)
+        if friend_status is None:
+            friend_status = self.get_friend_status(owner_phone, False)
+        if friend_status == "friend" or friend_status == "pending":
+            return FriendProfile(**self.as_json(), is_online=is_online, status=friend_status)
+        return FriendProfile(**self.as_safe_json(), is_online=is_online, status=friend_status)
 
     @staticmethod
     def exists(phone_number: str):
@@ -201,9 +231,7 @@ class Profile:
     @staticmethod
     def generate_color(phone_number, name):
         """ Generates color from mobile phone and name """
-        hash = 0
-        for char in (name + phone_number):
-            hash += ord(char) + ((hash << 5) - hash)
+        hash = int(md5((phone_number + name).encode("utf-8")).hexdigest(), base=16)
         colors = []
         for _ in range(3):
             colors.append(hash % 255)
@@ -213,7 +241,7 @@ class Profile:
     @staticmethod
     def generate_emoji(phone_number, name):
         """ Generates emoji from mobile_phone and name """
-        hash = 0
+        hash = int(md5((phone_number + name).encode("utf-8")).hexdigest(), base=16)
         for char in (name + phone_number):
             hash += ord(char) + ((hash << 5) - hash)
         return AVAILABLE_EMOJI[hash % len(AVAILABLE_EMOJI)]
@@ -227,14 +255,16 @@ class Profile:
             return Profile(**result)
         return None
 
-    @staticmethod
-    def fetch_existing(phone_numbers: List[str]):
-        """ Returns friends profiles from contact book (passed in phone_numbers)"""
+    def search_friends(self, phone_numbers: List[str]):
+        """ Returns friends profiles from contact book (passed in phone_numbers) """
         phone_numbers = normalize_phones(phone_numbers)
         exists_friends = connections.profiles_db.find({
-            "phone_number": {"$in": phone_numbers}
+            "$and": [
+                {"phone_number": {"$in": phone_numbers}},
+                {"phone_number": {"$not": {"$eq": self.phone_number}}}
+            ]
         })
         friends = []
         for friend in exists_friends:
-            friends.append(Profile(**friend).as_friend_profile().dict())
+            friends.append(Profile(**friend).as_friend_profile(owner_phone=self.phone_number).dict())
         return friends

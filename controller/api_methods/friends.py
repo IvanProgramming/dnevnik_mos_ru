@@ -2,7 +2,6 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 
 from exceptions.profiles import InvalidPhoneNumberError
-from model.profile import Profile
 from view.api_response import OKResponse
 
 
@@ -15,11 +14,7 @@ class FriendsEndpoint(HTTPEndpoint):
                 example: {"status":true,"data":{"friends":[{"name":"Ivan","phone_number":"79999999999","school_name":"Some's school","friends_count":1,"color":[201,146,208],"emoji":"cookie","is_online":false}],"pending":[],"requests":[]}}
         """
         profile = request.state.profile
-        return OKResponse({
-            "friends": profile.get_friends(),
-            "pending": profile.get_pending(),
-            "requests": profile.get_requests()
-        })
+        return OKResponse(profile.get_friends() + profile.get_requests() + profile.get_pending())
 
     async def put(self, request: Request):
         """
@@ -33,11 +28,13 @@ class FriendsEndpoint(HTTPEndpoint):
         """
         profile = request.state.profile
         phone_number = (await request.json())["phone_number"]
+        profile.add_friend(phone_number)
         if phone_number:
-            return OKResponse(profile.add_friend(phone_number))
+            return OKResponse({})
         raise InvalidPhoneNumberError
 
     async def delete(self, request: Request):
+        """"""
         profile = request.state.profile
         phone_number = (await request.json())["phone_number"]
         profile.delete_friend(phone_number)
@@ -53,10 +50,5 @@ async def search_friend(request: Request):
             description: if one passed - Friend is not in parabola
     """
     phone_numbers = (await request.json())["phone_numbers"]
-    if len(phone_numbers) == 1:
-        existing = Profile.fetch_existing(phone_numbers)
-        if existing:
-            return OKResponse(existing[0])
-        raise InvalidPhoneNumberError
-    else:
-        return OKResponse(Profile.fetch_existing(phone_numbers))
+    profile = request.state.profile
+    return OKResponse(profile.search_friends(phone_numbers))
