@@ -2,7 +2,7 @@ from typing import List
 
 from controller.utils import normalize_phones, normalize_phone
 from exceptions.profiles import SelfPhoneNumberError, InvalidPhoneNumberError, AlreadyInFriendsError, \
-    EmojiIsNotSupported, ColorModelError, NicknameTooLongError
+    EmojiIsNotSupported, ColorModelError, NicknameTooLongError, NotInFriendshipError
 from model.connections import connections
 from model.friend_profile import FriendProfile
 from settings import AVAILABLE_EMOJI
@@ -104,7 +104,7 @@ class Profile:
         if phone_number == self.phone_number:
             raise SelfPhoneNumberError
         connections.profiles_db.update_one({"phone_number": self.phone_number},
-                                           {"$push": {"friends": phone_number}})
+                                           {"$addToSet": {"friends": phone_number}})
         self.friends.append(phone_number)
         is_online = bool(connections.tokens_db.count_documents({"phone_number": phone_number}))
         return FriendProfile(**Profile.profile_by_phone(phone_number).as_json(), is_online=is_online).dict()
@@ -153,6 +153,14 @@ class Profile:
             "color": color
         }})
 
+    def delete_friend(self, phone_number: str):
+        """ This method performs friend deletion """
+        phone_number = normalize_phone(phone_number)
+        if phone_number not in self.friends:
+            raise NotInFriendshipError
+
+        connections.profiles_db.update_one({"phone_number": self.phone_number}, {"$pull": {"friends": phone_number}})
+
     @staticmethod
     def parse_friends_cursor(friends_cursor, as_dict=True):
         """ Parses MongoDB query to FriendProfile list]
@@ -176,6 +184,14 @@ class Profile:
                 dicted_friends_list.append(friend.dict())
             return dicted_friends_list
         return friends_list
+
+    def as_friend_profile(self, fetch_online=False):
+        """ Converts  profile to FriendProfile """
+        if fetch_online:
+            is_online = bool(connections.tokens_db.count_documents({"phone_number": self.phone_number}))
+        else:
+            is_online = False
+        return FriendProfile(**self.as_json(), is_online=is_online)
 
     @staticmethod
     def exists(phone_number: str):
@@ -222,10 +238,3 @@ class Profile:
         for friend in exists_friends:
             friends.append(Profile(**friend).as_friend_profile().dict())
         return friends
-
-    def as_friend_profile(self, fetch_online=False):
-        if fetch_online:
-            is_online = bool(connections.tokens_db.count_documents({"phone_number": self.phone_number}))
-        else:
-            is_online = False
-        return FriendProfile(**self.as_json(), is_online=is_online)
