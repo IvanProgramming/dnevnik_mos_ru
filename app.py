@@ -21,3 +21,4 @@ app = Starlette(routes=APP_ROUTES,
                 middleware=APP_MIDDLEWARES,
                 on_startup=[init_connections],
                 exception_handlers=EXCEPTION_HANDLERS)
+

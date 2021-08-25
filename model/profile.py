@@ -106,7 +106,7 @@ class Profile:
                 {"phone_number": {"$in": self.friends}},
                 {"friends": self.phone_number}
             ]})
-        return Profile.parse_friends_cursor(friends_cursor, "friend", self.phone_number, as_dict)
+        return Profile.parse_friends_cursor(friends_cursor, self.phone_number, as_dict)
 
     def add_friend(self, phone_number: str):
         """ Adding friend by his phone_number """
@@ -119,9 +119,7 @@ class Profile:
             raise SelfPhoneNumberError
         connections.profiles_db.update_one({"phone_number": self.phone_number},
                                            {"$addToSet": {"friends": phone_number}})
-        self.friends.append(phone_number)
-        is_online = bool(connections.tokens_db.count_documents({"phone_number": phone_number}))
-        friend_profile = Profile.profile_by_phone(phone_number)
+        self.sync_with_db()
 
     def get_pending(self, as_dict=True):
         """ Returns pending requests """
@@ -131,7 +129,7 @@ class Profile:
                 {"phone_number": {"$not": {"$in": self.friends}}}
             ]
         })
-        return Profile.parse_friends_cursor(pending_cursor, "pending", self.phone_number, as_dict)
+        return Profile.parse_friends_cursor(pending_cursor, self.phone_number, as_dict)
 
     def get_requests(self, as_dict=True):
         """ Returns your friend requests """
@@ -141,7 +139,7 @@ class Profile:
                 {"phone_number": {"$in": self.friends}}
             ]
         })
-        return Profile.parse_friends_cursor(request_cursor, "request", self.phone_number, as_dict)
+        return Profile.parse_friends_cursor(request_cursor, self.phone_number, as_dict)
 
     def edit_profile(self, nickname=None, emoji=None, color=None):
         """ Edits user profile """
@@ -177,7 +175,7 @@ class Profile:
         connections.profiles_db.update_one({"phone_number": phone_number}, {"$pull": {"friends": self.phone_number}})
 
     @staticmethod
-    def parse_friends_cursor(friends_cursor, status: str, owner_phone, as_dict=True):
+    def parse_friends_cursor(friends_cursor, owner_phone, as_dict=True):
         """ Parses MongoDB query to FriendProfile list]
             :param as_dict: Shows, if returned result should be a dict
         """
@@ -186,14 +184,8 @@ class Profile:
         for friend in friends_cursor:
             friend_profile = Profile(**friend)
             friends_list.append(
-                friend_profile.as_friend_profile(owner_phone=owner_phone, friend_status=status, fetch_online=False))
+                friend_profile.as_friend_profile(owner_phone=owner_phone))
             phones_list.append(friend_profile.phone_number)
-        online_phones = list(map(lambda x: x["phone_number"], connections.tokens_db.find({
-            "phone_number": {"$in": phones_list}
-        })))
-        for friend in friends_list:
-            if friend.phone_number in online_phones:
-                friend.is_online = True
         if as_dict:
             dicted_friends_list = []
             for friend in friends_list:
@@ -201,24 +193,24 @@ class Profile:
             return dicted_friends_list
         return friends_list
 
-    def get_friend_status(self, phone_number, reverse):
+    def get_friend_status(self, phone_number):
         phone_profile = self.profile_by_phone(phone_number)
         if phone_number in self.friends:
             if self.phone_number in phone_profile.friends:
                 return "friend"
-            return "request" if not reverse else "pending"
+            return "pending"
         if self.phone_number in phone_profile.friends:
-            return "pending" if not reverse else "request"
+            return "request"
         return "alien"
 
-    def as_friend_profile(self, owner_phone: str, friend_status=None, fetch_online=False):
+    def as_friend_profile(self, owner_phone: str, friend_status=None, fetch_online=True):
         """ Converts  profile to FriendProfile """
         if fetch_online:
             is_online = bool(connections.tokens_db.count_documents({"phone_number": self.phone_number}))
         else:
             is_online = False
         if friend_status is None:
-            friend_status = self.get_friend_status(owner_phone, False)
+            friend_status = self.get_friend_status(owner_phone)
         if friend_status == "friend" or friend_status == "pending":
             return FriendProfile(**self.as_json(), is_online=is_online, status=friend_status)
         return FriendProfile(**self.as_safe_json(), is_online=is_online, status=friend_status)

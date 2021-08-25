@@ -2,6 +2,7 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 
 from exceptions.profiles import InvalidPhoneNumberError
+from model.profile import Profile
 from view.api_response import OKResponse
 
 

@@ -13,3 +13,4 @@ def get_openapi_schema(request):
         {"openapi": "3.0.0", "info": {"title": "Lastic REST API", "version": "1.0.0"}}
     )
     return schemas.OpenAPIResponse(request)
+

@@ -1,5 +1,3 @@
-
-
 ## About The Project
 
 "Lastic" (eraser) is monolithic back-end service that implements app features such as friends, answers sharing and token verification.
