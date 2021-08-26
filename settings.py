@@ -5,6 +5,7 @@
 
 """
 from os import getenv
+from json import load
 
 DEBUG = getenv("LASTIC_DEBUG") == "true"
 
@@ -26,29 +27,23 @@ EXP_TIME = 4 * 60
 # Event expire time
 EVENT_EXP_TIME = 24 * 3600
 
+# Sentry URL for catching errors
+SENTRY_URL = getenv("LASTIC_SENTRY_URL")
+
+# This is methods, that are availible without confirmation token
 TOKEN_FREE_METHODS = [
     "/ping",
     "/schema",
     "/robots.txt",
     "/security.txt",
-    "/favicon.ico"
+    "/favicon.ico",
+    "/push"
 ]
 
-AVAILABLE_EMOJI = [
-    "smiley_cat",
-    "fox_face",
-    "unicorn",
-    "hamster",
-    "frog",
-    "tropical_fish",
-    "grapes",
-    "pizza",
-    "ramen",
-    "cookie",
-    "rice",
-    "pineapple",
-    "bagel",
-    "taco",
-    "helicopter",
-    "rocket"
+
+AVAILIBLE_EMOJI = list(load(open("./emojis.json")).keys())
+
+# FCMed endpoints (Should be removed)
+FCMED_ENDPOINTS = [
+    "/push"
 ]
