@@ -41,7 +41,7 @@ TOKEN_FREE_METHODS = [
 ]
 
 
-AVAILIBLE_EMOJI = list(load(open("./emojis.json")).keys())
+AVAILABLE_EMOJI = list(load(open("./emojis.json")).keys())
 
 # FCMed endpoints (Should be removed)
 FCMED_ENDPOINTS = [
