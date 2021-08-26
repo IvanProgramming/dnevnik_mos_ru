@@ -23,3 +23,13 @@ class PhoneIsNotPresented(ApiException):
     status_code = 4
     details = "Mobile phone is not presented in API response"
     http_code = 403
+
+class FCMTokenIsInvalid(ApiException):
+    status_code = 17
+    details = "FCM token is not presented"
+    http_code = 403
+
+class AuthDataRequired(ApiException):
+    status_code = 10
+    details = "Not all required authentification data is provided"
+    http_code = 403
