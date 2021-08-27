@@ -44,7 +44,8 @@ class Profile:
                 "friends": self.friends,
                 "color": self.color,
                 "emoji": self.emoji,
-                "gender": self.gender
+                "gender": self.gender,
+                "fcms": []
             }
             new_id = connections.profiles_db.insert_one(new_profile).inserted_id
             self._id = new_id
@@ -61,6 +62,7 @@ class Profile:
             self.name = db_object["name"]
             self._id = db_object["_id"]
             self.nickname = db_object["nickname"]
+            self.fcms = db_object["fcms"]
         else:
             self.register_new()
 
@@ -223,6 +225,14 @@ class Profile:
                 {"friends": self.phone_number}
             ]}, {"_id": 0, "phone_number": 1})
         return list(map(lambda x: x["phone_number"], phones_cursor))
+
+    def save_fcm(self, fcm):
+        """ Saves users FCM to database for messaging """
+        connections.profiles_db.update_one({"profile_phone": self.phone_number}, {"$push": {"fcms": fcm}})
+
+    def delete_fcm(self, fcm):
+        """ Deletes users FCM from DB """
+        connections.profiles_db.update_one({"profile_phone": self.phone_number}, {"$pull": {"fcms": fcm}})
 
     @staticmethod
     def exists(phone_number: str):
