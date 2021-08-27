@@ -11,8 +11,7 @@ from settings import AVAILABLE_EMOJI
 
 class Profile:
     def __init__(self, name: str, phone_number: str, school_name: str, gender: str, friends=None, _id=0, color=None,
-                 emoji=None,
-                 nickname=None):
+                 emoji=None, nickname=None, fcms=None):
         """ Constructor of model """
         if friends is None:
             friends = []
@@ -22,6 +21,8 @@ class Profile:
             emoji = Profile.generate_emoji(phone_number, name)
         if nickname is None:
             nickname = name
+        if fcms  is None:
+            fcms = []
         self.name = name
         self.nickname = nickname
         self.phone_number = normalize_phone(phone_number)
@@ -31,6 +32,7 @@ class Profile:
         self.emoji = emoji
         self.friends = friends
         self._id = _id
+        self.fcms = fcms
 
     def register_new(self):
         """ This function is used in controller, it is used for saving new profile, if it doesn't exists or to sync
@@ -45,7 +47,7 @@ class Profile:
                 "color": self.color,
                 "emoji": self.emoji,
                 "gender": self.gender,
-                "fcms": []
+                "fcms": self.fcms
             }
             new_id = connections.profiles_db.insert_one(new_profile).inserted_id
             self._id = new_id
@@ -172,7 +174,6 @@ class Profile:
         phone_number = normalize_phone(phone_number)
         if phone_number not in self.friends:
             raise NotInFriendshipError
-
         connections.profiles_db.update_one({"phone_number": self.phone_number}, {"$pull": {"friends": phone_number}})
         connections.profiles_db.update_one({"phone_number": phone_number}, {"$pull": {"friends": self.phone_number}})
 
@@ -253,8 +254,6 @@ class Profile:
     def generate_emoji(phone_number, name):
         """ Generates emoji from mobile_phone and name """
         hash = int(md5((phone_number + name).encode("utf-8")).hexdigest(), base=16)
-        for char in (name + phone_number):
-            hash += ord(char) + ((hash << 5) - hash)
         return AVAILABLE_EMOJI[hash % len(AVAILABLE_EMOJI)]
 
     @staticmethod
