@@ -1,8 +1,7 @@
 from pymongo import MongoClient, ASCENDING
 from pymongo.collection import Collection
-
+from firebase_admin import initialize_app, App
 from settings import DB_URL, EVENT_EXP_TIME
-
 
 class Connections:
     """ Connection is special object, that is used to store ALL connections of this back-end """
@@ -10,6 +9,7 @@ class Connections:
     tokens_db: Collection
     profiles_db: Collection
     events_db: Collection
+    firebase_app: App
 
     def start_connections(self):
         """ This method is used for starting all connections """
@@ -18,11 +18,13 @@ class Connections:
         self.profiles_db = self.mongo_client.db.profiles_collection
         self.events_db = self.mongo_client.db.events_collection
         self.setup_indexes()
+        self.firebase_app = initialize_app()
+
 
     def setup_indexes(self):
         """ Setting up indexes in MongoDB """
         self.tokens_db.create_index([('expiresAt', ASCENDING)], expireAfterSeconds=1)
-        self.events_db.create_index([('event_time', ASCENDING)], expireAfterSeconds=EVENT_EXP_TIME)
+        self.events_db.create_index([('time', ASCENDING)], expireAfterSeconds=EVENT_EXP_TIME)
 
 
 # Singleton object

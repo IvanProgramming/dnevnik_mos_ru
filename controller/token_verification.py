@@ -3,6 +3,7 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from exceptions.base_exception import ApiException
+from exceptions.providers import AuthDataRequired
 from model.diary_providers.utils import get_provider_by_unique_name
 from model.profile import Profile
 from model.token_caching import save_token, exists, get_cached_phone
@@ -44,4 +45,4 @@ class TokenVerificationMiddleware(BaseHTTPMiddleware):
         except ApiException as e:
             return e.response
         except KeyError:
-            return ErrorResponse({"details": "Not all data is provided", "status_code": 10}, status_code=403)
+            return AuthDataRequired.response

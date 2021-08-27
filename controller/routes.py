@@ -14,5 +14,7 @@ routes = (dev_routes if DEBUG else []) + [
     Route("/friends", endpoint=FriendsEndpoint),
     Route("/friends/search", endpoint=search_friend, methods=["GET"]),
     Route("/events", endpoint=EventEndpoint),
+    Route("/push", endpoint=ping, methods=["GET"]),
     Mount("", app=StaticFiles(directory="static"), name="static")
+
 ]
