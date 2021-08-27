@@ -8,6 +8,7 @@ from exceptions.providers import FCMTokenIsInvalid, AuthDataRequired
 from exceptions.base_exception import ApiException
 
 def is_fcm_valid(fcm_token: str):
+    """ Checking is FCM valid """
     try:
         test_message = Message(
             data={
@@ -24,6 +25,7 @@ def is_fcm_valid(fcm_token: str):
         return False
 
 class FCMMidlleware(BaseHTTPMiddleware):
+    """ This middleware is used for FCM confirmation and FCM saving """
     async def dispatch(self, request: Request, call_next):
         try:
             if request.url.path in FCMED_ENDPOINTS:
