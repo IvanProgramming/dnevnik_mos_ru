@@ -30,9 +30,12 @@ class FCMMidlleware(BaseHTTPMiddleware):
         try:
             if request.url.path in FCMED_ENDPOINTS:
                 try:
-                    FCM_TOKEN = request.headers["fcm_token"]
-                    if not is_fcm_valid(FCM_TOKEN):
+                    fcm_token = request.headers["fcm_token"]
+                    if not is_fcm_valid(fcm_token):
                         raise FCMTokenIsInvalid
+                    request.state.current_fcm = fcm_token
+                    if fcm_token not in request.state.profile.fcms:
+                        request.state.profile.save_fcm(fcm_token)
                 except KeyError:
                     raise AuthDataRequired
             response = await call_next(request)
