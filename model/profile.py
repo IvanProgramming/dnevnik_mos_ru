@@ -215,6 +215,15 @@ class Profile:
             return FriendProfile(**self.as_json(), is_online=is_online, status=friend_status)
         return FriendProfile(**self.as_safe_json(), is_online=is_online, status=friend_status)
 
+    def get_frends_phones(self) -> List[str]:
+        """ Returns list of phones, that is attached to your friends profies"""
+        phones_cursor = connections.profiles_db.find({
+            "$and": [
+                {"phone_number": {"$in": self.friends}},
+                {"friends": self.phone_number}
+            ]}, {"_id": 0, "phone_number": 1})
+        return list(map(lambda x: x["phone_number"], phones_cursor))
+
     @staticmethod
     def exists(phone_number: str):
         """ Checks is profile exists """
