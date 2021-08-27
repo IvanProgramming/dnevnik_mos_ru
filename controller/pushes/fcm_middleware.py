@@ -1,13 +1,13 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from aiohttp import request
 from firebase_admin.messaging import send, Message, UnregisteredError
+from firebase_admin.exceptions import InvalidArgumentError
 from settings import FCMED_ENDPOINTS
 from model.connections import connections
 from exceptions.providers import FCMTokenIsInvalid, AuthDataRequired
 from exceptions.base_exception import ApiException
 
-async def is_fcm_valid(fcm_token: str):
+def is_fcm_valid(fcm_token: str):
     try:
         test_message = Message(
             data={
@@ -15,8 +15,11 @@ async def is_fcm_valid(fcm_token: str):
             },
             token=fcm_token
         )
-        send(test_message, dry_run=True)
+        response = send(test_message, dry_run=True)
+        print(response)
         return True
+    except InvalidArgumentError:
+        return False
     except UnregisteredError:
         return False
 
@@ -25,7 +28,7 @@ class FCMMidlleware(BaseHTTPMiddleware):
         try:
             if request.url.path in FCMED_ENDPOINTS:
                 try:
-                    FCM_TOKEN = request.headers["fcm-token"]
+                    FCM_TOKEN = request.headers["fcm_token"]
                     if not is_fcm_valid(FCM_TOKEN):
                         raise FCMTokenIsInvalid
                 except KeyError:
