@@ -1,8 +1,13 @@
-from time import sleep, time
-from ..base_auth_provider import BaseAuthProvider
-from ..exceptions import CredentialsInvalidException
+from time import time
+
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 from urllib3.util import parse_url
+
+from dnevnik.auth_providers.code_based_provider import CodeBasedProvider
+from ..base_auth_provider import BaseAuthProvider
 
 
 class SeleniumAuthorization(BaseAuthProvider):
@@ -12,38 +17,42 @@ class SeleniumAuthorization(BaseAuthProvider):
         self.login = login
         self.password = password
         self.executable_path = executable_path
+        self.callback_provider = None
 
     def proceed_authorization(self):
         start_time = time()
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-blink-features=AutomationControlled")
-        driver = webdriver.Chrome(options=options, executable_path=self.executable_path)
+        self.driver = webdriver.Chrome(options=options, executable_path=self.executable_path)
 
-        driver.get("https://dnevnik.mos.ru")
-        login_button = driver.find_element_by_xpath("//div[2]/div/a")
+        self.driver.get("https://school.mos.ru")
+        login_button = self.find_element(
+            (By.XPATH, '//*[@id="root"]/div[1]/div[1]/main/section/div/div[1]/div[3]/div/div[1]/div[2]/div'))
         login_button.click()
 
-        login_input = driver.find_element_by_id("login")
-        password_input = driver.find_element_by_id("password")
-        submit_button = driver.find_element_by_id("bind")
+        login_input = self.find_element((By.ID, "login"))
+        password_input = self.find_element((By.ID, "password"))
+        submit_button = self.find_element((By.ID, "bind"))
 
         login_input.send_keys(self.login)
         password_input.send_keys(self.password)
         submit_button.click()
+        self.driver.execute_cdp_cmd('Network.setBlockedURLs', {"urls": ["https://school.mos.ru"]})
+        self.driver.execute_cdp_cmd('Network.enable', {})
+        while parse_url(self.driver.current_url).host != "school.mos.ru":
+            pass
+        callback_code = parse_url(self.driver.current_url).query[5:]
 
-        auth_token = driver.get_cookie("auth_token")
-        while parse_url(driver.current_url).host != "dnevnik.mos.ru":
-            if driver.find_element_by_css_selector('blockquote.blockquote-danger'):
-                raise CredentialsInvalidException(driver.find_element_by_css_selector('blockquote.blockquote-danger'))
+        self.driver.close()
 
-        while not auth_token:
-            auth_token = driver.get_cookie("auth_token")
-            sleep(0.01)
-
-        self.profile_id = int(driver.get_cookie("profile_id")["value"])
-        driver.close()
-        execution_time = time() - start_time
-        self.auth_token = auth_token['value']
+        self.login_provider = CodeBasedProvider(callback_code)
+        self.login_provider.proceed_authorization()
+        self.auth_token = self.login_provider.auth_token
+        self.profile_id = self.login_provider.profile_id
 
     def refresh_token(self):
-        self.proceed_authorization()
+        self.login_provider.refresh_token()
+
+    def find_element(self, locator, time=10):
+        return WebDriverWait(self.driver, time).until(EC.presence_of_element_located(locator),
+                                                      message=f"Can't find element by locator {locator}")
