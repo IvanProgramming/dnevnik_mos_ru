@@ -13,6 +13,7 @@ setup(
         'selenium',
         'bs4',
         'lxml',
-        'pydantic'
+        'pydantic',
+        'Inject'
     ]
 )
