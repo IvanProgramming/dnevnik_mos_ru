@@ -1,12 +1,9 @@
-from datetime import datetime
-from pprint import pp
 from typing import List
-import json
 
 from dnevnik import Teacher
-from dnevnik.school import School
 from dnevnik.class_unit import ClassUnit
 from dnevnik.group import Group
+from dnevnik.school import School
 from dnevnik.utils import *
 
 

@@ -1,10 +1,8 @@
-from json import dumps
-
 import requests
-from requests import session
 from urllib3.util import parse_url
-from ..base_auth_provider import BaseAuthProvider
+
 from dnevnik.auth_providers.code_based_provider import CodeBasedProvider
+from ..base_auth_provider import BaseAuthProvider
 
 
 class BLoginProvider(BaseAuthProvider):

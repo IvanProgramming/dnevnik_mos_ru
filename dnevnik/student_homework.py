@@ -1,5 +1,3 @@
-from pprint import pp
-
 from .homework_entry import HomeworkEntry
 from .utils import *
 
