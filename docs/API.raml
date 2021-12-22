@@ -204,3 +204,62 @@ baseUri: https://dnevnik.mos.ru
           required: false
           type: integer
           example: 2531290
+
+/mobile/api:
+  /v1.0/menu:
+    description: Получает меню в столовой
+    get:
+      description: GET-метод
+      queryParameters:
+        date:
+          description: Дата на которую надо получить меню
+          required: true
+          type: date-only
+          example: 2020-11-09
+        contract_id:
+          description: ??? чаще всего 1
+          required: true
+          type: integer
+          example: 1
+  /notifications/search:
+    description: Оповещения пользователя
+    get:
+      description: GET-метод
+      queryParameters:
+        student_id:
+          description: ID пользователя
+          required: false
+          type: integer
+          example: 2531290
+  /schedule:
+    description: Расписание включая допы и переменв
+    get:
+      description: GET-метод
+      queryParameters:
+        student_id:
+          description: ID пользователя
+          required: true
+          type: integer
+          example: 2531290
+        date:
+          description: Дата на который надо получить расписание
+          required: true
+          type: date-only
+          example: 2020-11-09
+
+/reports/api:
+  /progress/json:
+    description: Получает прогресс обучения
+    get:
+      description: GET-метод
+      queryParameters:
+        academic_year_id:
+          description: Академический год
+          required: true
+          type: integer
+          example: 9
+        student_profile_id:
+          description: ID пользователя
+          required: false
+          type: integer
+          example: 2531290
