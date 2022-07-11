@@ -1,0 +1,1878 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Diary API",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Ivan",
+      "url": "https://github.com/ivanprogramming"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT",
+      "x-last-modified": 1650831625649
+    },
+    "x-logo": {
+      "url": ""
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dnevnik.mos.ru"
+    }
+  ],
+  "paths": {
+    "/mobile/api/schedule": {
+      "get": {
+        "parameters": [
+          {
+            "example": "{{STUDENT_ID}}",
+            "name": "student_id",
+            "description": "Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "date",
+            "description": "Specifies date of required schedule",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "externalDocs": {
+                    "description": "",
+                    "url": ""
+                  },
+                  "example": "",
+                  "properties": {
+                    "summary": {
+                      "description": "Count of lessons with russian word \"уроков\", used to display above schedule table",
+                      "type": "string"
+                    },
+                    "date": {
+                      "format": "date",
+                      "description": "Date of schedule table",
+                      "type": "string"
+                    },
+                    "activities": {
+                      "description": "List of activities (lessons and breaks)",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ScheduleActivity"
+                      }
+                    },
+                    "has_homework": {
+                      "description": "Flag, shows, has student homework assigned for that day",
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Schedule",
+        "tags": [
+          "Mobile API",
+          "Schedules"
+        ]
+      }
+    },
+    "/mobile/api/periods_schedules": {
+      "get": {
+        "parameters": [
+          {
+            "name": "student_id",
+            "description": "Required. Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          },
+          {
+            "name": "from",
+            "description": "Periods schedule start",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          },
+          {
+            "name": "to",
+            "description": "Periods schedule end",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "operationId": "getSchedulePeriods",
+        "summary": "Get Schedule Periods",
+        "tags": [
+          "Mobile API",
+          "Schedules"
+        ]
+      }
+    },
+    "/mobile/api/lesson_schedule_items/{schedule_item_id}": {
+      "get": {
+        "parameters": [
+          {
+            "deprecated": false,
+            "name": "student_id",
+            "description": "Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": false,
+            "x-last-modified": 1650968718221
+          },
+          {
+            "deprecated": false,
+            "name": "schedule_item_id",
+            "description": "Schedule item ID, can be obtained from Schedules",
+            "schema": {
+              "type": "number"
+            },
+            "in": "path",
+            "required": true,
+            "x-last-modified": 1650968735080
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleItem"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "operationId": "getLessonScheduleItems",
+        "summary": "Get Lesson schedule item",
+        "tags": [
+          "Mobile API",
+          "Schedules"
+        ]
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "schedule_item_id",
+          "in": "path",
+          "required": true,
+          "description": "Schedule item ID, can be obtained from getSchedule method"
+        }
+      ]
+    },
+    "/mobile/api/marks": {
+      "get": {
+        "parameters": [
+          {
+            "deprecated": false,
+            "name": "from",
+            "description": "Mark fetch period start. Format 'yyyy-mm-dd'",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            },
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": false,
+            "x-last-modified": 1650970367547
+          },
+          {
+            "deprecated": false,
+            "name": "to",
+            "description": "Mark fetch period end. Format 'yyyy-mm-dd'",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            },
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": false,
+            "x-last-modified": 1650970377668
+          },
+          {
+            "deprecated": false,
+            "name": "student_id",
+            "description": "Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "number"
+            },
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": false,
+            "x-last-modified": 1650970353575
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "properties": {
+                    "payload": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Mark"
+                      }
+                    }
+                  },
+                  "externalDocs": {
+                    "description": "",
+                    "url": ""
+                  },
+                  "example": ""
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "operationId": "getMarks",
+        "summary": "Get Marks",
+        "tags": [
+          "Mobile API",
+          "Marks"
+        ],
+        "description": ""
+      }
+    },
+    "/mobile/api/marks/{mark_id}": {
+      "get": {
+        "parameters": [
+          {
+            "deprecated": false,
+            "name": "student_id",
+            "description": "Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "required": false,
+            "allowEmptyValue": false,
+            "x-last-modified": 1650970400208
+          },
+          {
+            "deprecated": false,
+            "name": "mark_id",
+            "description": "Mark ID. Can be obtained from Get Marks endpoint",
+            "schema": {
+              "type": "integer"
+            },
+            "in": "path",
+            "required": true,
+            "x-last-modified": 1650970414767
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mark"
+                },
+                "example": {
+                  "id": 1664176530,
+                  "value": "3",
+                  "comment": "",
+                  "weight": 1,
+                  "control_form_name": "Тест",
+                  "comment_exists": false,
+                  "created_at": "2022-04-18T09:02:00",
+                  "updated_at": "2022-04-18T09:02:00",
+                  "teacher": {
+                    "last_name": "Кузнецов",
+                    "first_name": "Александр",
+                    "middle_name": "Юрьевич"
+                  },
+                  "date": "2022-04-18",
+                  "activity": {
+                    "schedule_item_id": 316164938,
+                    "lesson_topic": "Закон радиоактивного распада. Период полураспада"
+                  },
+                  "history": [],
+                  "is_exam": false,
+                  "is_point": false,
+                  "original_grade_system_type": "five"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "operationId": "getMark",
+        "summary": "Get Mark",
+        "tags": [
+          "Mobile API",
+          "Marks"
+        ],
+        "description": ""
+      }
+    },
+    "/mobile/api/subject_marks/short": {
+      "get": {
+        "parameters": [
+          {
+            "example": "{{STUDENT_ID}}",
+            "name": "student_id",
+            "description": "Required. Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "externalDocs": {
+                    "description": "",
+                    "url": ""
+                  },
+                  "example": "",
+                  "properties": {
+                    "payload": {
+                      "type": "array",
+                      "items": {
+                      "$ref": "#/components/schemas/SubjectMark"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "payload": [
+                    {
+                      "average": "5.00",
+                      "dynamic": "NONE",
+                      "period": "За второе полугодие",
+                      "count": 4,
+                      "target": {
+                        "value": 5,
+                        "remain": 0,
+                        "paths": []
+                      },
+                      "subject_name": "Индивидуальный проект"
+                    },
+                    {
+                      "average": "4.00",
+                      "dynamic": "DOWN",
+                      "period": "За второе полугодие",
+                      "count": 6,
+                      "target": {
+                        "value": 5,
+                        "remain": 9,
+                        "round": "4.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 9,
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      "subject_name": "Иностранный язык (английский)"
+                    },
+                    {
+                      "average": "4.36",
+                      "dynamic": "UP",
+                      "period": "За второе полугодие",
+                      "count": 9,
+                      "target": {
+                        "value": 5,
+                        "remain": 4,
+                        "round": "4.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 4,
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      "subject_name": "Информатика"
+                    },
+                    {
+                      "average": "5.00",
+                      "dynamic": "UP",
+                      "period": "За второе полугодие",
+                      "count": 2,
+                      "target": {
+                        "value": 5,
+                        "remain": 0,
+                        "paths": []
+                      },
+                      "subject_name": "История"
+                    },
+                    {
+                      "average": "3.00",
+                      "dynamic": "DOWN",
+                      "period": "За второе полугодие",
+                      "count": 1,
+                      "target": {
+                        "value": 4,
+                        "remain": 1,
+                        "round": "3.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 1,
+                            "weight": 1
+                          },
+                          {
+                            "value": 4,
+                            "remain": 2,
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      "subject_name": "Литература"
+                    },
+                    {
+                      "average": "3.00",
+                      "dynamic": "UP",
+                      "period": "За второе полугодие",
+                      "count": 4,
+                      "target": {
+                        "value": 4,
+                        "remain": 2,
+                        "round": "3.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 2,
+                            "weight": 1
+                          },
+                          {
+                            "value": 4,
+                            "remain": 6,
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      "subject_name": "Математика"
+                    },
+                    {
+                      "average": "4.33",
+                      "dynamic": "DOWN",
+                      "period": "За первое полугодие",
+                      "count": 3,
+                      "subject_name": "Обществознание",
+                      "fixed_value": "4"
+                    },
+                    {
+                      "dynamic": "NONE",
+                      "subject_name": "Родной язык"
+                    },
+                    {
+                      "average": "4.00",
+                      "dynamic": "UP",
+                      "period": "За второе полугодие",
+                      "count": 2,
+                      "target": {
+                        "value": 5,
+                        "remain": 3,
+                        "round": "4.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 3,
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      "subject_name": "Родной язык (русский)"
+                    },
+                    {
+                      "average": "3.33",
+                      "dynamic": "UP",
+                      "period": "За первое полугодие",
+                      "count": 7,
+                      "subject_name": "Русский язык",
+                      "fixed_value": "3"
+                    },
+                    {
+                      "average": "4.80",
+                      "dynamic": "UP",
+                      "period": "За второе полугодие",
+                      "count": 5,
+                      "target": {
+                        "value": 5,
+                        "remain": 0,
+                        "paths": []
+                      },
+                      "subject_name": "Спецкурс \"Алгоритмизация и программирование\""
+                    },
+                    {
+                      "average": "4.67",
+                      "dynamic": "UP",
+                      "period": "За второе полугодие",
+                      "count": 3,
+                      "target": {
+                        "value": 5,
+                        "remain": 0,
+                        "paths": []
+                      },
+                      "subject_name": "Спецкурс \"Основы программирования на языке С++\""
+                    },
+                    {
+                      "average": "4.80",
+                      "dynamic": "DOWN",
+                      "period": "За второе полугодие",
+                      "count": 4,
+                      "target": {
+                        "value": 5,
+                        "remain": 0,
+                        "paths": []
+                      },
+                      "subject_name": "Спецкурс \"Робототехника\""
+                    },
+                    {
+                      "average": "3.31",
+                      "dynamic": "DOWN",
+                      "period": "За второе полугодие",
+                      "count": 13,
+                      "target": {
+                        "value": 4,
+                        "remain": 3,
+                        "round": "3.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 3,
+                            "weight": 1
+                          },
+                          {
+                            "value": 4,
+                            "remain": 7,
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      "subject_name": "Физика"
+                    },
+                    {
+                      "average": "4.50",
+                      "dynamic": "DOWN",
+                      "period": "За второе полугодие",
+                      "count": 2,
+                      "target": {
+                        "value": 5,
+                        "remain": 1,
+                        "round": "4.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 1,
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      "subject_name": "Физическая культура"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Subjects marks",
+        "tags": [
+          "Mobile API",
+          "Marks"
+        ]
+      }
+    },
+    "/mobile/api/subject_marks/for_subject": {
+      "get": {
+        "parameters": [
+          {
+            "example": "{{STUDENT_ID}}",
+            "name": "student_id",
+            "description": "Required. Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          },
+          {
+            "example": "Физика",
+            "name": "subject_name",
+            "description": "Required. Subject name",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "average": "4.00",
+                  "dynamic": "DOWN",
+                  "periods": [
+                    {
+                      "start": "01.09",
+                      "end": "30.12",
+                      "title": "За первое полугодие",
+                      "dynamic": "DOWN",
+                      "value": "4.08",
+                      "marks": [
+                        {
+                          "id": 1406605131,
+                          "value": "2",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Лабораторная работа",
+                          "comment_exists": false,
+                          "date": "2021-09-17",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1409916012,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Решение задач",
+                          "comment_exists": false,
+                          "date": "2021-09-24",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1420354584,
+                          "value": "5",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Лабораторная работа",
+                          "comment_exists": false,
+                          "date": "2021-09-27",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1419412339,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Тест",
+                          "comment_exists": false,
+                          "date": "2021-09-30",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1420356896,
+                          "value": "5",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Лабораторная работа",
+                          "comment_exists": false,
+                          "date": "2021-10-01",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1419656459,
+                          "value": "5",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Цифровое домашнее задание",
+                          "comment_exists": false,
+                          "date": "2021-10-04",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1438422268,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Решение задач",
+                          "comment_exists": false,
+                          "date": "2021-10-14",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1444685073,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Лабораторная работа",
+                          "comment_exists": false,
+                          "date": "2021-10-15",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1522379938,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 2,
+                          "control_form_name": "Контрольная работа",
+                          "comment_exists": false,
+                          "date": "2021-12-01",
+                          "is_exam": true,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1522381872,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Лабораторная работа",
+                          "comment_exists": false,
+                          "date": "2021-12-06",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1522504918,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Учебное задание",
+                          "comment_exists": false,
+                          "date": "2021-12-20",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        }
+                      ],
+                      "count": 11,
+                      "fixed_value": "4"
+                    },
+                    {
+                      "start": "01.01",
+                      "end": "31.08",
+                      "title": "За второе полугодие",
+                      "dynamic": "DOWN",
+                      "value": "3.31",
+                      "marks": [
+                        {
+                          "id": 1603270641,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Виртуальный практикум",
+                          "comment_exists": false,
+                          "date": "2022-02-10",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1603401142,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Лабораторная работа",
+                          "comment_exists": false,
+                          "date": "2022-02-16",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1605918412,
+                          "value": "4",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Решение задач",
+                          "comment_exists": false,
+                          "date": "2022-02-28",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1605527643,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 2,
+                          "control_form_name": "Контрольная работа",
+                          "comment_exists": false,
+                          "date": "2022-02-28",
+                          "is_exam": true,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1605529488,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Лабораторная работа",
+                          "comment_exists": false,
+                          "date": "2022-02-28",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1603566756,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 2,
+                          "control_form_name": "Контрольная работа",
+                          "comment_exists": false,
+                          "date": "2022-03-02",
+                          "is_exam": true,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1608474453,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Решение задач",
+                          "comment_exists": false,
+                          "date": "2022-03-03",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1614496181,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Решение задач",
+                          "comment_exists": false,
+                          "date": "2022-03-09",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1628790623,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Решение задач",
+                          "comment_exists": false,
+                          "date": "2022-03-16",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1628937294,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Виртуальный практикум",
+                          "comment_exists": false,
+                          "date": "2022-03-21",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1628837060,
+                          "value": "5",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Учебное задание",
+                          "comment_exists": false,
+                          "date": "2022-03-21",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1643124535,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 2,
+                          "control_form_name": "Контрольная работа",
+                          "comment_exists": false,
+                          "date": "2022-03-30",
+                          "is_exam": true,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        },
+                        {
+                          "id": 1664176530,
+                          "value": "3",
+                          "comment": "",
+                          "weight": 1,
+                          "control_form_name": "Тест",
+                          "comment_exists": false,
+                          "date": "2022-04-18",
+                          "is_exam": false,
+                          "is_point": false,
+                          "original_grade_system_type": "five"
+                        }
+                      ],
+                      "count": 13,
+                      "target": {
+                        "value": 4,
+                        "remain": 3,
+                        "round": "3.51",
+                        "paths": [
+                          {
+                            "value": 5,
+                            "remain": 3,
+                            "weight": 1
+                          },
+                          {
+                            "value": 4,
+                            "remain": 7,
+                            "weight": 1
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "subject_name": "Физика",
+                  "average_by_all": "3.64"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Subjects marks Copy",
+        "tags": [
+          "Mobile API",
+          "Marks"
+        ]
+      }
+    },
+    "/mobile/api/profile": {
+      "get": {
+        "tags": [
+          "Mobile API"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "externalDocs": {
+                    "description": "",
+                    "url": ""
+                  },
+                  "example": ""
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "operationId": "getUserProfile",
+        "summary": "Get User profile"
+      }
+    },
+    "/mobile/api/subjects/list": {
+      "get": {
+        "tags": [
+          "Mobile API"
+        ],
+        "parameters": [
+          {
+            "example": "{{STUDENT_ID}}",
+            "name": "student_id",
+            "schema": {
+              "type": "string"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "properties": {
+                    "payload": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SubjectId"
+                      }
+                    }
+                  },
+                  "externalDocs": {
+                    "description": "",
+                    "url": ""
+                  },
+                  "example": ""
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get Subjects"
+      }
+    },
+    "/mobile/api/homeworks": {
+      "summary": "Returns homeworks list",
+      "get": {
+        "tags": [
+          "Mobile API"
+        ],
+        "parameters": [
+          {
+            "deprecated": false,
+            "name": "student_id",
+            "description": "Profile ID. Can be obtained from user profile",
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "required": true,
+            "allowEmptyValue": false,
+            "x-last-modified": 1650972167393
+          }
+        ],
+        "operationId": "getHomeworks",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "x-last-modified": 1650972096951
+    }
+  },
+  "components": {
+    "schemas": {
+      "SubjectMarkTarget": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "Current rouded value",
+            "type": "number"
+          },
+          "remain": {
+            "description": "Remaining values to next mark value",
+            "type": "number"
+          },
+          "roobjectund": {
+            "description": "Float, converted to string. Border value for getting next mark",
+            "type": "string",
+            "example": [
+              "3.51"
+            ]
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubjectMarkTargetPath"
+            }
+          }
+        },
+        "example": {
+          "target": {
+            "value": 4,
+            "remain": 1,
+            "round": "3.51",
+            "paths": [
+              {
+                "value": 5,
+                "remain": 1,
+                "weight": 1
+              },
+              {
+                "value": 4,
+                "remain": 2,
+                "weight": 1
+              }
+            ]
+          }
+        },
+        "x-last-modified": 1650831411768
+      },
+      "SubjectMarkTargetPath": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "Value of mark for reaching the goal",
+            "type": "number",
+            "example": [
+              5
+            ]
+          },
+          "remain": {
+            "description": "Count of remaining marks",
+            "type": "number"
+          },
+          "weight": {
+            "description": "Weight of mark for reaching target",
+            "type": "number"
+          }
+        },
+        "x-last-modified": 1650830057705
+      },
+      "SubjectMark": {
+        "type": "object",
+        "x-last-modified": 1650831754300,
+        "properties": {
+          "average": {
+            "description": "Float, converted to string, shows average mark for period",
+            "type": "string"
+          },
+          "dynamic": {
+            "type": "string",
+            "description": "Can be UP, DOWN or NONE. Shows character of mark conversion",
+            "enum": [
+              "UP",
+              "DOWN",
+              "NONE"
+            ]
+          },
+          "count": {
+            "description": "Count of marks",
+            "type": "integer"
+          },
+          "target": {
+            "$ref": "#/components/schemas/SubjectMarkTarget"
+          },
+          "subject_name": {
+            "description": "Name of Subject",
+            "type": "string"
+          }
+        },
+        "description": ""
+      },
+      "Teacher": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "description": "First name of teacher",
+            "type": "string",
+            "example": [
+              "Иван"
+            ]
+          },
+          "last_name": {
+            "description": "Last name of teacher",
+            "type": "string",
+            "example": [
+              "Иванов"
+            ]
+          },
+          "middle_name": {
+            "description": "Middle name of teacher",
+            "type": "string",
+            "example": [
+              "Иванович"
+            ]
+          },
+          "birth_date": {
+            "description": "Teacher's date of birth (I didn't saw it nonnulled)",
+            "type": "string"
+          },
+          "sex": {
+            "description": "Teacher's gender [male/female] (I didn't saw it nonnulled)",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "Teacher's user id in system [male/female] (I didn't saw it nonnulled)",
+            "type": "string"
+          }
+        },
+        "example": {
+          "last_name": "Кузнецов",
+          "first_name": "Александр",
+          "middle_name": "Юрьевич"
+        },
+        "x-last-modified": 1650918491308
+      },
+      "MarkActivity": {
+        "type": "object",
+        "properties": {
+          "schedule_item_id": {
+            "description": "Schedule lesson unique ID, can be fetched with Get Lesson schedule item method",
+            "type": "number"
+          },
+          "lesson_topic": {
+            "description": "Lesson topic",
+            "type": "string"
+          }
+        },
+        "x-last-modified": 1650924453396
+      },
+      "SubjectId": {
+        "type": "object",
+        "properties": {
+          "subject_id": {
+            "description": "Uinique ID for subject",
+            "type": "integer"
+          },
+          "subject_name": {
+            "description": "Subject name",
+            "type": "string"
+          }
+        },
+        "x-last-modified": 1650968398389
+      },
+      "MarkValue": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Describes name of measurment system",
+            "type": "string",
+            "example": "5-балльная"
+          },
+          "nmax": {
+            "type": "number"
+          },
+          "grade": {
+            "type": "object",
+            "properties": {
+              "origin": {
+                "description": "Original value of mark in original system",
+                "type": "string"
+              },
+              "five": {
+                "description": "Value of mark in fifth system (from 1 to 5)",
+                "type": "number",
+                "example": 5
+              },
+              "hundred": {
+                "description": "Value of mark in hundredth values system (from 1 to 100)",
+                "type": "number",
+                "example": 100
+              }
+            }
+          },
+          "grade_system_id": {
+            "description": "Grade system unique ID",
+            "type": "number",
+            "example": 4139946
+          },
+          "grade_system_type": {
+            "description": "Grade system type, described by word",
+            "type": "string",
+            "example": "five"
+          }
+        },
+        "example": {
+          "name": "5-балльная",
+          "nmax": 6,
+          "grade": {
+            "origin": "5",
+            "five": 5,
+            "hundred": 100
+          },
+          "grade_system_id": 4139946,
+          "grade_system_type": "five"
+        },
+        "x-last-modified": 1650971365874
+      },
+      "Mark": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Mark unique ID",
+            "type": "number"
+          },
+          "value": {
+            "description": "Mark value",
+            "type": "string",
+            "example": "5"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarkValue"
+            }
+          },
+          "comment": {
+            "description": "Specifies teacher's comment for mark",
+            "type": "string",
+            "example": "Good Job!"
+          },
+          "weight": {
+            "description": "Specifies how this mark will be counted in final result (e.g. if weight is 2, in final result it will be counted as 2)",
+            "type": "number",
+            "example": 2
+          },
+          "control_form_name": {
+            "description": "Specifies form of estimated work",
+            "type": "string",
+            "example": "Homework"
+          },
+          "comment_exists": {
+            "description": "Specifies, if teacher left a comment (but also you can just compare comment with empty string)",
+            "type": "boolean",
+            "example": [
+              true
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "description": "Specifies mark creation datetime",
+            "type": "string",
+            "example": "2022-04-18T09:02:00"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "description": "Specifies mark last update datetime",
+            "type": "string",
+            "example": "2022-04-18T09:02:00"
+          },
+          "criteria": {
+            "description": "Should specifies mark creation creteria (but I didn't see this property nonnulled)",
+            "type": "string",
+            "example": []
+          },
+          "teacher": {
+            "$ref": "#/components/schemas/Teacher"
+          },
+          "date": {
+            "description": "Date of object creation",
+            "type": "string",
+            "example": "2022-04-18"
+          },
+          "activity": {
+            "$ref": "#/components/schemas/MarkActivity"
+          },
+          "history": {
+            "description": "History of mark change",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": []
+            }
+          },
+          "is_exam": {
+            "description": "If flag setted as true, the mark setted for exam",
+            "type": "boolean",
+            "example": false
+          },
+          "is_point": {
+            "description": "Point-Marks - marks, that will be created on special date, if teacher won'rt remove it",
+            "type": "boolean",
+            "example": false
+          },
+          "point_date": {
+            "format": "date",
+            "description": "Specifies border date if mark is point-mark",
+            "type": "string",
+            "example": []
+          },
+          "original_grade_system_type": {
+            "description": "Grade System name",
+            "type": "string",
+            "example": "five"
+          }
+        },
+        "example": {
+          "id": 1664176530,
+          "value": "3",
+          "weight": 1,
+          "control_form_name": "Тест",
+          "comment_exists": false,
+          "created_at": "2022-04-18T09:02:00",
+          "updated_at": "2022-04-18T09:02:00",
+          "teacher": {
+            "last_name": "Кузнецов",
+            "first_name": "Александр",
+            "middle_name": "Юрьевич"
+          },
+          "date": "2022-04-18",
+          "activity": {
+            "schedule_item_id": 316164938,
+            "lesson_topic": "Закон радиоактивного распада. Период полураспада"
+          },
+          "history": [],
+          "is_exam": false,
+          "is_point": false,
+          "original_grade_system_type": "five"
+        },
+        "x-last-modified": 1650971480208
+      },
+      "LessonHomework": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "description": "Homework description, displayed under subject name in diary",
+            "type": "string",
+            "example": [
+              "ex 12, p. 123"
+            ]
+          },
+          "comments": {
+            "description": "List of commentaries for homework, left by teacher",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": []
+            }
+          },
+          "homework_entry_student_id": {
+            "type": "number",
+            "example": [
+              1435475989
+            ]
+          },
+          "attachments": {
+            "description": "List of attachment, for example list of attached files or Digital Home Work",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "subject_id": {
+            "description": "Unique ID of subject",
+            "type": "number",
+            "example": 32
+          },
+          "date": {
+            "type": "string",
+            "example": "2022-04-28"
+          },
+          "date_assigned_on": {
+            "description": "Date of homework assignment",
+            "type": "string",
+            "example": "2022-04-26"
+          },
+          "subject_name": {
+            "description": "Name of Subject",
+            "type": "string",
+            "example": "Informatics"
+          },
+          "lesson_date_time": {
+            "format": "date-time",
+            "description": "Datetime of lesson in schedule table",
+            "type": "string",
+            "example": "2022-04-28T12:25:00"
+          },
+          "additional_materials": {
+            "description": "List of additional materials, for example list of attached files",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "is_done": {
+            "description": "Flag, specifies, is homework marked by user as done",
+            "type": "boolean",
+            "example": false
+          }
+        },
+        "example": {
+          "description": "https://kpolyakov.spb.ru/school/ege/kege/train.htm?varId=12&select=7FFFFFF\nрешить вариант, пройдя по ссылке",
+          "comments": [],
+          "homework_entry_student_id": 1435475989,
+          "attachments": [],
+          "subject_id": 32,
+          "date": "2022-04-28",
+          "date_assigned_on": "2022-04-26",
+          "subject_name": "Информатика",
+          "lesson_date_time": "2022-04-28T12:25:00",
+          "additional_materials": [],
+          "is_done": false
+        },
+        "x-last-modified": 1651133117584
+      },
+      "ScheduleItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique ID of Schedule item",
+            "type": "number"
+          },
+          "date": {
+            "format": "date",
+            "description": "Date of lesson",
+            "type": "string",
+            "example": "2022-04-26"
+          },
+          "teacher": {
+            "$ref": "#/components/schemas/Teacher"
+          },
+          "marks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Mark"
+            }
+          },
+          "comment": {
+            "description": "Comment for lesson, left by teacher",
+            "type": "string",
+            "example": "Today was a good day"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "content": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": []
+                }
+              },
+              "materials": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": []
+                }
+              },
+              "theme": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": []
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": []
+                  },
+                  "themeIntegrationId": {
+                    "type": "number",
+                    "example": [
+                      32102550
+                    ]
+                  },
+                  "average_mark": {
+                    "type": "string",
+                    "example": []
+                  },
+                  "theme_frames": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": [
+                            32121199
+                          ]
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": [
+                            "Культура научного и делового общения"
+                          ]
+                        },
+                        "themeIntegrationId": {
+                          "type": "number",
+                          "example": [
+                            32102550
+                          ]
+                        },
+                        "average_mark": {
+                          "type": "string",
+                          "example": []
+                        },
+                        "theme_frames": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": []
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "lessonId": {
+                "type": "number",
+                "example": [
+                  842890026
+                ]
+              },
+              "lesson_topic": {
+                "type": "string",
+                "example": [
+                  "Официально-деловой стиль."
+                ]
+              }
+            }
+          },
+          "control": {
+            "type": "string",
+            "example": []
+          },
+          "evaluation": {
+            "type": "string",
+            "example": []
+          },
+          "plan_id": {
+            "type": "number",
+            "example": [
+              11011662
+            ]
+          },
+          "begin_time": {
+            "description": "Begin time of lesson",
+            "type": "string",
+            "example": "14:40"
+          },
+          "end_time": {
+            "description": "End time of lesson",
+            "type": "string",
+            "example": "15:25"
+          },
+          "subject_id": {
+            "description": "Subject unique ID",
+            "type": "number",
+            "example": 3177
+          },
+          "subject_name": {
+            "description": "Subject name",
+            "type": "string",
+            "example": "Informatics"
+          },
+          "course_lesson_type": {
+            "type": "string",
+            "example": []
+          },
+          "room_number": {
+            "description": "Classroom number in school where lesson takes it place",
+            "type": "string",
+            "example": "301"
+          },
+          "room_name": {
+            "description": "Classroom purpose",
+            "type": "string",
+            "example": [
+              "Биология"
+            ]
+          },
+          "building_name": {
+            "description": "School building adress",
+            "type": "string",
+            "example": "Ферганский проезд 5 корп. 2 "
+          },
+          "created_date_time": {
+            "type": "string",
+            "example": []
+          },
+          "is_missed_lesson": {
+            "description": "Specifies, is lesson was missed by student",
+            "type": "boolean",
+            "example": [
+              false
+            ]
+          },
+          "lesson_type": {
+            "description": "Specifies lesson type. Can be NORMAL (ordinary lesson in school) or ELECTRONIC (lesson is virtual, takes place in Microsoft Tems)",
+            "enum": [
+              "NORMAL",
+              "ELECTRONIC"
+            ],
+            "type": "string",
+            "example": "NORMAL"
+          },
+          "field_name": {
+            "type": "string",
+            "example": []
+          },
+          "lesson_homeworks": {
+            "description": "List of homework attached to lessons",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LessonHomework"
+            }
+          },
+          "homework_to_give": {
+            "type": "string",
+            "example": []
+          },
+          "remote_lesson": {
+            "type": "string",
+            "example": []
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "example": [
+              false
+            ]
+          }
+        },
+        "x-last-modified": 1651133234101
+      },
+      "ScheduleActivity": {
+        "type": "object",
+        "x-examples": {},
+        "description": "",
+        "title": "",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of activity",
+            "enum": [
+              "LESSON",
+              "BREAK"
+            ]
+          },
+          "info": {
+            "type": "string",
+            "description": "Activity label",
+            "example": "1 урок"
+          },
+          "begin_utc": {
+            "type": "integer",
+            "format": "utc",
+            "example": 0,
+            "description": "Begin timestamp in UTC"
+          },
+          "end_utc": {
+            "type": "integer",
+            "description": "End timestamp in UTC",
+            "example": 0,
+            "format": "utc"
+          },
+          "begin_time": {
+            "type": "string",
+            "format": "time",
+            "example": "10:00",
+            "description": "Activity begin time"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "time",
+            "example": "10:15",
+            "description": "Activity end time"
+          },
+          "room_number": {
+            "type": "string",
+            "description": "Number of room, where lesson takes place",
+            "example": "301"
+          },
+          "room_name": {
+            "type": "string",
+            "description": "Purpose of room, where lesson takes place",
+            "example": "Biology room"
+          },
+          "building_name": {
+            "type": "string",
+            "description": "Adress of school building",
+            "example": "8820 E Pine St, Tulsa"
+          },
+          "lesson": {
+            "$ref": "#/components/schemas/ScheduleItem"
+          },
+          "duration": {
+            "type": "number",
+            "description": "Length of break in seconds"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Operation succeeded",
+        "x-last-modified": 1650832022014
+      },
+      "403": {
+        "content": {
+          "text/html": {
+            "example": "<html>\r\n<head>\r\n\t<title>403 Forbidden</title>\r\n</head>\r\n<body>\r\n\t<center>\r\n\t\t<h1>403 Forbidden</h1>\r\n\t</center>\r\n\t<hr>\r\n\t<center>nginx/1.18.0</center>\r\n</body>\r\n</html>"
+          }
+        },
+        "description": "Connection without correct auth",
+        "x-last-modified": 1650920331551
+      }
+    },
+    "securitySchemes": {
+      "apikeyAuth": {
+        "type": "apiKey",
+        "description": "AuthToken, that can be obtained with selenium or with other methods",
+        "name": "Auth-Token",
+        "in": "header",
+        "x-last-modified": 1650830305245
+      }
+    },
+    "headers": {},
+    "parameters": {}
+  },
+  "tags": [
+    {
+      "name": "Mobile API"
+    },
+    {
+      "name": "Schedules",
+      "x-last-modified": 1650971506435
+    },
+    {
+      "name": "Marks",
+      "x-last-modified": 1650971515059
+    }
+  ],
+  "security": [
+    {
+      "apikeyAuth": []
+    }
+  ]
+}
