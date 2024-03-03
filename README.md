@@ -1,4 +1,4 @@
-> Этот репозиторий находиться  в архиве и уже скорее всего не работает. Автор уже на втором курсе универа. Если все еще хочется воспользоваться либой, можно изучить (этот замечательный порт от RedGuy)[https://github.com/RedGuyRu/DnevnikApiPython]
+> Этот репозиторий находиться  в архиве и уже скорее всего не работает. Автор уже на втором курсе универа. Если все еще хочется воспользоваться либой, можно изучить [этот замечательный порт от RedGuy](https://github.com/RedGuyRu/DnevnikApiPython)
 
 ## dnevnik-mos-ru
 [![time tracker](https://wakatime.com/badge/github/IvanProgramming/dnevnik_mos_ru.svg)](https://wakatime.com/badge/github/IvanProgramming/dnevnik_mos_ru)
